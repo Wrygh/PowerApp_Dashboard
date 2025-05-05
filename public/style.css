@@ -1,0 +1,40 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
+
+h1 {
+  color: #00e676;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.card {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 255, 128, 0.1);
+}
+
+.card h2 {
+  color: #00e676;
+}
+
+#ledStatusList {
+  list-style: none;
+  padding: 0;
+}
+
+#ledStatusList li {
+  margin: 6px 0;
+}
