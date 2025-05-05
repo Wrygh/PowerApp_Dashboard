@@ -8,7 +8,6 @@ app.use(express.json());
 app.use(express.static('public'));
 
 const DATA_FILE = path.join(__dirname, 'data.json');
-const HISTORY_FILE = path.join(__dirname, 'history.json');
 
 function loadData() {
   if (!fs.existsSync(DATA_FILE)) return {};
@@ -19,39 +18,22 @@ function saveData(data) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 }
 
-function loadHistory() {
-  if (!fs.existsSync(HISTORY_FILE)) return [];
-  return JSON.parse(fs.readFileSync(HISTORY_FILE));
-}
-
-function saveHistory(history) {
-  fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2));
-}
-
+// POST from ESP32
 app.post('/data', (req, res) => {
   const { stepCount, voltage, battery, ledStatus } = req.body;
-
   const data = loadData();
+
   data.stepCount = stepCount;
   data.voltage = voltage;
   data.battery = battery;
   data.ledStatus = ledStatus;
-
-  // Total step count tracking
-  if (!data.stepCountTotal) data.stepCountTotal = 0;
-  data.stepCountTotal += stepCount;
+  data.timestamp = new Date().toISOString();
 
   saveData(data);
-
-  // Append to history for graph
-  const history = loadHistory();
-  history.push({ time: Date.now(), stepCount });
-  if (history.length > 144) history.shift(); // keep last 12 hours (if every 5min)
-  saveHistory(history);
-
   res.sendStatus(200);
 });
 
+// POST from MIT App (LED control)
 app.post('/command', (req, res) => {
   const { command } = req.body;
   const data = loadData();
@@ -63,6 +45,7 @@ app.post('/command', (req, res) => {
   res.sendStatus(200);
 });
 
+// GET latest data
 app.get('/status', (req, res) => {
   const data = loadData();
   res.json(data);
