@@ -1,85 +1,51 @@
-const stepChart = new Chart(document.getElementById('stepChart').getContext('2d'), {
-  type: 'line',
+const stepGraph = document.getElementById("stepGraph").getContext("2d");
+
+const myChart = new Chart(stepGraph, {
+  type: "line",
   data: {
-    labels: [],
+    labels: ["0h", "1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h"],
     datasets: [{
-      label: 'Steps Over Time',
-      data: [],
-      backgroundColor: 'rgba(0,170,255,0.1)',
-      borderColor: '#00aaff',
-      borderWidth: 2,
-      pointRadius: 2,
+      label: 'Step Count',
+      data: [0, 20, 30, 40, 45, 50, 60, 70, 80, 100, 120, 150],
+      borderColor: "#00bfff",
+      backgroundColor: "rgba(0, 191, 255, 0.3)",
       fill: true,
-      tension: 0.3
     }]
   },
   options: {
     responsive: true,
-    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
-        ticks: {
-          color: "#ffffff"
-        }
-      },
-      x: {
-        ticks: {
-          color: "#ffffff"
-        }
-      }
-    },
-    plugins: {
-      legend: {
-        labels: {
-          color: "#ffffff"
-        }
       }
     }
   }
 });
 
-let dataPoints = 0;
+// Simulated real-time data
+setInterval(async () => {
+  // Example data - Replace with actual API response
+  const data = {
+    stepCount: Math.floor(Math.random() * 100),
+    battery: Math.floor(Math.random() * 100),
+    voltage: (Math.random() * 5).toFixed(2),
+    ledStatus: "LED 1 ON",
+  };
 
-async function fetchData() {
-  try {
-    const response = await fetch('/status');
-    const data = await response.json();
+  // Update Step Count
+  document.getElementById("stepCount").textContent = data.stepCount;
+  document.getElementById("todaySteps").textContent = data.stepCount; // For today
+  myChart.data.datasets[0].data.push(data.stepCount);
+  myChart.data.datasets[0].data.shift();
+  myChart.update();
 
-    document.getElementById("stepCount").textContent = data.stepCount || "--";
-    document.getElementById("voltage").textContent = (data.voltage || "--") + " V";
+  // Update Battery Level Gauge
+  document.getElementById("battery").textContent = `${data.battery}%`;
+  document.getElementById("batteryGauge").style.background = `conic-gradient(#00bfff ${data.battery}% , #1e1e1e 0%)`;
 
-    // LED Status
-    const ledStatuses = data.ledStatus || {};
-    let ledHTML = "";
-    for (let i = 1; i <= 6; i++) {
-      const status = ledStatuses[`LED${i}`] || "--";
-      ledHTML += `<p>LED ${i}: ${status}</p>`;
-    }
-    document.getElementById("ledStatus").innerHTML = ledHTML;
+  // Update Voltage
+  document.getElementById("voltage").textContent = `${data.voltage} V`;
 
-    // Battery Circle
-    const batteryValue = data.battery || 0;
-    const batteryCircle = document.getElementById("batteryCircle");
-    batteryCircle.setAttribute("data-label", `${batteryValue}%`);
-    batteryCircle.style.background = `conic-gradient(#00aaff 0% ${batteryValue}%, #222 ${batteryValue}% 100%)`;
-
-    // Update chart
-    const currentHour = new Date().getHours();
-    if (dataPoints >= 24) {
-      stepChart.data.labels.shift();
-      stepChart.data.datasets[0].data.shift();
-    }
-
-    stepChart.data.labels.push(`${currentHour}:00`);
-    stepChart.data.datasets[0].data.push(data.stepCount || 0);
-    stepChart.update();
-    dataPoints++;
-
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-}
-
-setInterval(fetchData, 2000); // 2s interval
-fetchData();
+  // Update LED Status
+  document.getElementById("ledStatus").textContent = data.ledStatus;
+}, 1000);
