@@ -3,61 +3,61 @@
 <head>
   <meta charset="UTF-8" />
   <title>PowerStep Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="logo-container">
-    <img src="logo.png" alt="PowerStep Logo" class="glow-logo">
-  </div>
+  <header>
+    <img src="assets/logo.png" alt="PowerStep Logo" class="logo" />
+    <h1 class="title">PowerStep Realtime Dashboard</h1>
+    <p class="description">
+      PowerStep is an energy-aware step tracking system developed by <strong>ByteForce</strong>, a Computer Engineering student at <strong>Cavite State University - Carmona Campus</strong>. 
+      This dashboard displays real-time data for step activity, battery health, voltage, and system status. Monitor your embedded system performance live, and stay charged with PowerStep.
+    </p>
+  </header>
 
-  <h1 class="glow-title">PowerStep Realtime Dashboard</h1>
-
-  <p class="description">
-    <strong>PowerStep</strong> is an innovative energy monitoring system developed by <strong>ByteForce</strong>,
-    a team of Computer Engineering students at <em>Cavite State University – Carmona Campus</em>. This dashboard provides real-time visualization
-    of step-generated power, voltage input, battery level, and LED statuses using IoT technologies. Designed for precision and simplicity,
-    the interface allows users to track energy efficiency and hardware status clearly and professionally.
-  </p>
-
-  <div class="grid">
-    <!-- Step Count (Bigger) -->
-    <div class="tile tile-wide">
-      <div class="label">Step Count</div>
-      <div class="value" id="stepCount">--</div>
-      <div class="label">Today's Total</div>
-      <div class="value" id="stepCountTotal">--</div>
-      <div class="step-container">
+  <main class="tiles">
+    <!-- Top Row -->
+    <div class="top-row">
+      <div class="tile tile-step">
+        <h2>Step Count</h2>
+        <div class="value" id="stepCount">--</div>
+        <div class="label">Step count for today:</div>
+        <div class="value" id="stepCountTotal">--</div>
         <canvas id="stepChart"></canvas>
       </div>
-    </div>
-
-    <!-- Voltage Input (Smaller) -->
-    <div class="tile tile-small">
-      <div class="label">Voltage Input</div>
-      <div class="value" id="voltage">--</div>
-    </div>
-
-    <!-- Battery -->
-    <div class="tile">
-      <div class="label">Battery Level</div>
-      <div class="value" id="battery">--</div>
-      <canvas id="batteryGauge"></canvas>
-    </div>
-
-    <!-- LED Status -->
-    <div class="tile">
-      <div class="label">LED Status</div>
-      <div class="led-status" id="ledStatus">
-        <div>LED 1: --</div>
-        <div>LED 2: --</div>
-        <div>LED 3: --</div>
-        <div>LED 4: --</div>
-        <div>LED 5: --</div>
-        <div>LED 6: --</div>
+      <div class="tile tile-battery">
+        <h2>Battery Level</h2>
+        <canvas id="batteryGauge" width="150" height="150"></canvas>
+        <div class="value" id="battery">--</div>
       </div>
     </div>
-  </div>
+
+    <!-- Bottom Row -->
+    <div class="bottom-row">
+      <div class="tile tile-voltage">
+        <h2>Voltage Input</h2>
+        <div class="value" id="voltage">--</div>
+      </div>
+
+      <div class="tile tile-led">
+        <h2>LED Status</h2>
+        <div id="ledStatus" class="led-list">
+          <div>LED 1: --</div>
+          <div>LED 2: --</div>
+          <div>LED 3: --</div>
+          <div>LED 4: --</div>
+          <div>LED 5: --</div>
+          <div>LED 6: --</div>
+        </div>
+      </div>
+
+      <div class="tile tile-app">
+        <h2>Download & Install PowerApp</h2>
+        <p><a href="https://tinyurl.com/PowerAppInstaller" target="_blank">https://tinyurl.com/PowerAppInstaller</a></p>
+      </div>
+    </div>
+  </main>
 
   <script src="script.js"></script>
 </body>
