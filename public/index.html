@@ -1,101 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>PowerStep Dashboard</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #e6f2ff;
-      color: #003366;
-      text-align: center;
-      padding: 20px;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      color: #004080;
-      text-shadow: 0 0 10px rgba(0, 136, 255, 0.5);
-    }
-
-    .data-box {
-      margin: 20px auto;
-      padding: 20px;
-      width: 300px;
-      border-radius: 20px;
-      background: #ffffff;
-      box-shadow: 0 0 20px rgba(0, 136, 255, 0.4);
-    }
-
-    .label {
-      font-weight: bold;
-      margin-top: 10px;
-    }
-
-    .value {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-    }
-
-    .gauge {
-      width: 100%;
-      height: 150px;
-    }
-
-    .led-status {
-      font-size: 1.2em;
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 10px;
-      background-color: #cce6ff;
-      box-shadow: inset 0 0 10px rgba(0, 136, 255, 0.3);
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>🔋 PowerStep Realtime Dashboard</h1>
-
-  <div class="data-box">
-    <div class="label">Step Count</div>
-    <div class="value" id="stepCount">--</div>
-
-    <div class="label">Voltage (V)</div>
-    <div class="value" id="voltage">--</div>
-
-    <div class="label">Battery Level</div>
-    <progress id="batteryGauge" class="gauge" max="100" value="0"></progress>
-    <div class="value" id="battery">--</div>
-
-    <div class="label">LED Status</div>
-    <div class="led-status" id="ledStatus">Waiting...</div>
+  <div class="logo-container">
+    <img src="file:///C:/Users/Louise/Downloads/POWERSTEP__1_-removebg-preview.png" alt="PowerStep Logo" class="glow-logo" />
   </div>
 
-  <script>
-    // Real-time data simulation (replace this with real socket or polling fetch)
-    setInterval(async () => {
-      try {
-        const response = await fetch('/data'); // Endpoint from ESP32
-        const data = await response.json();
+  <h1>PowerStep Realtime Dashboard</h1>
 
-        document.getElementById("stepCount").textContent = data.stepCount;
-        document.getElementById("voltage").textContent = data.voltage + " V";
-        document.getElementById("battery").textContent = data.battery + "%";
-        document.getElementById("batteryGauge").value = data.battery;
-        
-        const ledText = (num) => {
-          const state = [
-            "LED 1 ON", "LED 1 OFF", "LED 2 ON", "LED 2 OFF",
-            "LED 3 ON", "LED 3 OFF", "LED 4 ON", "LED 4 OFF",
-            "LED 5 ON", "LED 5 OFF", "LED 6 ON", "LED 6 OFF"
-          ];
-          return state[data.ledStatus - 1] || "Unknown";
-        };
+  <div class="grid">
+    <div class="tile">
+      <div class="label">Step Count</div>
+      <div class="value" id="stepCount">--</div>
+      <div class="label">Today's Total</div>
+      <div class="value" id="stepCountTotal">--</div>
+      <canvas id="stepChart" height="100"></canvas>
+    </div>
 
-        document.getElementById("ledStatus").textContent = ledText(data.ledStatus);
-      } catch (e) {
-        console.error("Failed to fetch data", e);
-      }
-    }, 1000); // Updates every second
-  </script>
+    <div class="tile">
+      <div class="label">Voltage Input</div>
+      <div class="value" id="voltage">-- V</div>
+    </div>
+
+    <div class="tile">
+      <div class="label">Battery Level</div>
+      <canvas id="batteryGauge" width="150" height="150"></canvas>
+      <div class="value" id="battery">--%</div>
+    </div>
+
+    <div class="tile">
+      <div class="label">LED Status</div>
+      <div class="led-status" id="ledStatus">
+        <div>LED1: <span id="LED1">--</span></div>
+        <div>LED2: <span id="LED2">--</span></div>
+        <div>LED3: <span id="LED3">--</span></div>
+        <div>LED4: <span id="LED4">--</span></div>
+        <div>LED5: <span id="LED5">--</span></div>
+        <div>LED6: <span id="LED6">--</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
