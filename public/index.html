@@ -4,53 +4,216 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PowerStep Dashboard</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .logo {
+      width: 100px;
+      filter: drop-shadow(0 0 15px #00bfff);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #00bfff;
+      text-shadow: 0 0 10px #00bfff;
+      margin: 10px 0;
+    }
+
+    .description {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 30px auto;
+      color: #ccc;
+      font-size: 1rem;
+      padding: 0 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1400px;
+      margin: auto;
+    }
+
+    .tile {
+      background-color: #111;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+      text-align: center;
+    }
+
+    .tile h2 {
+      color: #00bfff;
+      margin-bottom: 10px;
+    }
+
+    .tile p {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .gauge-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 auto;
+    }
+
+    .gauge-fill {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(#00bfff 0%, #111 0%);
+      transition: background 0.3s ease;
+    }
+
+    .gauge-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    canvas {
+      background: #111;
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
+
   <header>
     <img src="logo.png" alt="PowerStep Logo" class="logo" />
     <h1>PowerStep Dashboard</h1>
-    <p>Developed by ByteForce | Cavite State University - Carmona Campus</p>
+    <p class="description">
+      <strong>PowerStep</strong> is a project developed by <strong>ByteForce</strong>, a team of Computer Engineering students from <strong>Cavite State University - Carmona Campus</strong>. It is an IoT-based system designed specifically for areas with high foot traffic, such as school hallways and walkways, to monitor movement and convert the energy from footsteps into usable power for LED lighting. This dashboard serves as the server view of the system, showing real-time data on step count, voltage, battery level, and LED system status.
+    </p>
   </header>
 
-  <main>
-    <div class="tiles-container">
-      <div class="tile">
-        <h3>Step Count</h3>
-        <p id="stepCount">0</p>
-      </div>
-      <div class="tile">
-        <h3>Today's Steps</h3>
-        <p id="todaySteps">0</p>
-      </div>
-      <div class="tile">
-        <h3>Battery Level</h3>
-        <div class="battery-gauge">
-          <div class="battery-fill" id="batteryFill"></div>
-          <span id="batteryText">0%</span>
-        </div>
-      </div>
-      <div class="tile">
-        <h3>Voltage</h3>
-        <p id="voltage">0 V</p>
-      </div>
-      <div class="tile">
-        <h3>LED Status</h3>
-        <p id="ledStatus">OFF</p>
+  <main class="grid">
+    <div class="tile">
+      <h2>Step Count</h2>
+      <p id="stepCount">--</p>
+    </div>
+    <div class="tile">
+      <h2>Today's Steps</h2>
+      <p id="todaySteps">--</p>
+    </div>
+    <div class="tile">
+      <h2>Battery Level</h2>
+      <div class="gauge-container">
+        <div class="gauge-fill" id="batteryGauge"></div>
+        <div class="gauge-text" id="batteryText">--%</div>
       </div>
     </div>
-
-    <section class="chart-section">
-      <h3>Step Count Over Time</h3>
-      <canvas id="stepChart"></canvas>
-    </section>
+    <div class="tile">
+      <h2>Voltage Input</h2>
+      <p id="voltage">-- V</p>
+    </div>
+    <div class="tile">
+      <h2>LED Status</h2>
+      <p id="ledStatus">--</p>
+    </div>
+    <div class="tile">
+      <h2>Step Graph</h2>
+      <canvas id="stepChart" height="200"></canvas>
+    </div>
+    <div class="tile">
+      <h2>Download & Install PowerApp</h2>
+      <a href="https://tinyurl.com/PowerAppInstaller" style="color:#00bfff;text-decoration:none;font-weight:bold;">https://tinyurl.com/PowerAppInstaller</a>
+    </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 ByteForce. All rights reserved.</p>
+    &copy; 2025 ByteForce | All rights reserved.
   </footer>
 
-  <script src="script.js"></script>
+  <script>
+    const batteryGauge = document.getElementById("batteryGauge");
+    const batteryText = document.getElementById("batteryText");
+
+    const ctx = document.getElementById('stepChart').getContext('2d');
+    const stepChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Array.from({ length: 10 }, (_, i) => `T-${9 - i}`),
+        datasets: [{
+          label: 'Steps',
+          data: Array(10).fill(0),
+          borderColor: '#00bfff',
+          backgroundColor: 'rgba(0,191,255,0.1)',
+          borderWidth: 2,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: '#fff' }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#fff' },
+            grid: { color: '#333' }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#fff' },
+            grid: { color: '#333' }
+          }
+        }
+      }
+    });
+
+    function updateData() {
+      // Simulate data - Replace with real fetch
+      const stepCount = Math.floor(Math.random() * 5000);
+      const todaySteps = Math.floor(Math.random() * 10000);
+      const battery = Math.floor(Math.random() * 100);
+      const voltage = (Math.random() * 5).toFixed(2);
+      const ledStatus = Math.random() > 0.5 ? "ON" : "OFF";
+
+      document.getElementById("stepCount").textContent = stepCount;
+      document.getElementById("todaySteps").textContent = todaySteps;
+      document.getElementById("voltage").textContent = voltage + " V";
+      document.getElementById("ledStatus").textContent = ledStatus;
+      batteryText.textContent = battery + "%";
+      batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
+
+      stepChart.data.datasets[0].data.push(stepCount);
+      stepChart.data.datasets[0].data.shift();
+      stepChart.update();
+    }
+
+    updateData();
+    setInterval(updateData, 1000);
+  </script>
 </body>
 </html>
