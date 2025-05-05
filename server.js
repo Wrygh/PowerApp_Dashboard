@@ -1,11 +1,13 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors'); // To handle CORS for frontend requests
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors()); // Enable CORS
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('public')); // Static files like images
 
 const DATA_FILE = path.join(__dirname, 'data.json');
 
@@ -20,7 +22,7 @@ function saveData(data) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 }
 
-// POST from ESP32 (to send real-time sensor data)
+// POST from ESP32 (updates data)
 app.post('/data', (req, res) => {
   const { stepCount, voltage, battery, ledStatus } = req.body;
   const data = loadData();
@@ -29,38 +31,26 @@ app.post('/data', (req, res) => {
   data.battery = battery;
   data.ledStatus = ledStatus;
   saveData(data);
-  res.sendStatus(200); // Confirm received data
+  res.sendStatus(200);
 });
 
-// POST from MIT App (to control LED states)
+// POST from MIT App (LED control)
 app.post('/command', (req, res) => {
-  const { command } = req.body; // Command will have a value 1-12 representing the LED state (on/off)
+  const { command } = req.body;
   const data = loadData();
-  
-  // Map the LED command to on/off state
-  const ledNum = Math.floor((command + 1) / 2); // If command 1-2 -> LED1, command 3-4 -> LED2, etc.
+  const ledNum = Math.floor((command + 1) / 2);
   const ledState = command % 2 === 1 ? 'ON' : 'OFF';
-
-  // Make sure ledStatus exists
   if (!data.ledStatus) data.ledStatus = {};
-
-  // Store LED states in the data object
   data.ledStatus[`LED${ledNum}`] = ledState;
   saveData(data);
-
-  res.sendStatus(200); // Confirm LED command
+  res.sendStatus(200);
 });
 
-// GET latest data (for ESP32 or MIT App to fetch current status)
+// GET latest data for frontend (Step count, Voltage, Battery, LED Status)
 app.get('/status', (req, res) => {
   const data = loadData();
   res.json(data);
 });
 
-// Serve static files (such as the frontend dashboard)
-app.use(express.static(path.join(__dirname, 'public')));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
