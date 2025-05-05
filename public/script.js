@@ -1,113 +1,121 @@
-let stepChart;
-let stepHistory = [];
+const stepData = [];
+const labels = [];
 
-function initStepChart() {
-  const ctx = document.getElementById('stepChart').getContext('2d');
-  stepChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [],
-      datasets: [{
-        label: 'Step Count',
-        data: [],
-        borderColor: '#0077cc',
-        backgroundColor: 'rgba(0, 119, 204, 0.1)',
-        tension: 0.4,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            color: '#cccccc',
-            precision: 0,
-            stepSize: 1
-          }
-        },
-        x: {
-          ticks: {
-            color: '#cccccc'
-          }
-        }
+const stepCtx = document.getElementById('stepChart').getContext('2d');
+const batteryCanvas = document.getElementById('batteryGauge');
+const batteryCtx = batteryCanvas.getContext('2d');
+
+// Setup Step Chart
+const stepChart = new Chart(stepCtx, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Steps',
+      data: stepData,
+      borderColor: '#00aaff',
+      backgroundColor: 'rgba(0, 170, 255, 0.2)',
+      borderWidth: 2,
+      tension: 0.3,
+      fill: true,
+      pointRadius: 3,
+      pointBackgroundColor: '#00aaff'
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { color: '#ffffff' },
+        grid: { color: 'rgba(255,255,255,0.1)' }
       },
-      plugins: {
-        legend: {
-          labels: {
-            color: '#cccccc'
-          }
-        }
+      x: {
+        ticks: { color: '#ffffff' },
+        grid: { color: 'rgba(255,255,255,0.05)' }
       }
-    }
-  });
-}
-
-function updateStepChart(stepCount) {
-  const now = new Date();
-  const label = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-  if (stepChart.data.labels.length > 24) {
-    stepChart.data.labels.shift();
-    stepChart.data.datasets[0].data.shift();
-  }
-
-  stepChart.data.labels.push(label);
-  stepChart.data.datasets[0].data.push(stepCount);
-  stepChart.update();
-}
-
-function updateBatteryGauge(ctx, value) {
-  new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Battery'],
-      datasets: [{
-        data: [value, 100 - value],
-        backgroundColor: ['#00ccff', '#333333'],
-        borderWidth: 0
-      }]
     },
-    options: {
-      cutout: '70%',
-      plugins: {
-        legend: { display: false }
+    plugins: {
+      legend: {
+        labels: { color: '#ffffff' }
       }
     }
-  });
+  }
+});
+
+// Draw battery gauge as circular arc
+function drawBatteryGauge(percentage) {
+  const size = batteryCanvas.width;
+  const center = size / 2;
+  const radius = center - 10;
+
+  batteryCtx.clearRect(0, 0, size, size);
+
+  // Background circle
+  batteryCtx.beginPath();
+  batteryCtx.arc(center, center, radius, 0, 2 * Math.PI);
+  batteryCtx.strokeStyle = '#222';
+  batteryCtx.lineWidth = 10;
+  batteryCtx.stroke();
+
+  // Foreground arc
+  batteryCtx.beginPath();
+  batteryCtx.arc(center, center, radius, -0.5 * Math.PI, (percentage / 100) * 2 * Math.PI - 0.5 * Math.PI);
+  batteryCtx.strokeStyle = '#00aaff';
+  batteryCtx.lineWidth = 10;
+  batteryCtx.stroke();
+
+  // Text
+  batteryCtx.fillStyle = '#ffffff';
+  batteryCtx.font = '16px Segoe UI';
+  batteryCtx.textAlign = 'center';
+  batteryCtx.fillText(percentage + '%', center, center + 6);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  initStepChart();
-  const batteryCanvas = document.getElementById('batteryGauge');
-  updateBatteryGauge(batteryCanvas.getContext('2d'), 0);
+// LED text mapping
+function ledTextMap(data) {
+  const leds = [];
+  for (let i = 1; i <= 6; i++) {
+    const state = data.ledStatus?.[`LED${i}`] || '--';
+    leds.push(`LED ${i}: ${state}`);
+  }
+  return leds;
+}
 
-  setInterval(async () => {
-    try {
-      const response = await fetch('/status');
-      const data = await response.json();
+// Fetch data
+async function fetchData() {
+  try {
+    const response = await fetch('/status');
+    const data = await response.json();
 
-      document.getElementById("stepCount").textContent = data.stepCount ?? '--';
-      document.getElementById("stepCountTotal").textContent = data.stepCount ?? '--';
-      document.getElementById("voltage").textContent = data.voltage + " V";
-      document.getElementById("battery").textContent = data.battery + "%";
-      updateBatteryGauge(batteryCanvas.getContext('2d'), data.battery);
+    document.getElementById("stepCount").textContent = data.stepCount ?? '--';
+    document.getElementById("stepCountTotal").textContent = data.stepCount ?? '--'; // same value for demo
+    document.getElementById("voltage").textContent = (data.voltage ?? '--') + " V";
+    document.getElementById("battery").textContent = (data.battery ?? '--') + "%";
 
-      // LED status
-      const statusContainer = document.getElementById('ledStatus');
-      statusContainer.innerHTML = '';
-      for (let i = 1; i <= 6; i++) {
-        const status = data.ledStatus?.[`LED${i}`] || "--";
-        const div = document.createElement("div");
-        div.textContent = `LED ${i}: ${status}`;
-        statusContainer.appendChild(div);
-      }
+    drawBatteryGauge(data.battery ?? 0);
 
-      updateStepChart(data.stepCount);
-    } catch (e) {
-      console.error("Fetch error:", e);
+    const ledLines = ledTextMap(data);
+    document.getElementById("ledStatus").innerHTML = ledLines.map(s => `<div>${s}</div>`).join('');
+
+    // Push to chart
+    const now = new Date();
+    const timeLabel = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    if (labels.length > 20) {
+      labels.shift();
+      stepData.shift();
     }
-  }, 1000);
-});
+    labels.push(timeLabel);
+    stepData.push(data.stepCount ?? 0);
+    stepChart.update();
+
+  } catch (e) {
+    console.error("Fetch failed:", e);
+  }
+}
+
+// Initial draw
+drawBatteryGauge(0);
+
+// Poll every second
+setInterval(fetchData, 1000);
