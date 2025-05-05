@@ -3,45 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <title>PowerStep Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="logo-container">
-    <img src="file:///C:/Users/Louise/Downloads/POWERSTEP__1_-removebg-preview.png" alt="PowerStep Logo" class="glow-logo" />
+    <img src="logo.png" alt="PowerStep Logo" class="glow-logo">
   </div>
 
   <h1>PowerStep Realtime Dashboard</h1>
 
   <div class="grid">
+    <!-- Tile 1: Step Count -->
     <div class="tile">
       <div class="label">Step Count</div>
       <div class="value" id="stepCount">--</div>
       <div class="label">Today's Total</div>
       <div class="value" id="stepCountTotal">--</div>
-      <canvas id="stepChart" height="100"></canvas>
+      <div class="step-container">
+        <canvas id="stepChart"></canvas>
+      </div>
     </div>
 
+    <!-- Tile 2: Voltage -->
     <div class="tile">
       <div class="label">Voltage Input</div>
-      <div class="value" id="voltage">-- V</div>
+      <div class="value" id="voltage">--</div>
     </div>
 
-    <div class="tile">
-      <div class="label">Battery Level</div>
-      <canvas id="batteryGauge" width="150" height="150"></canvas>
-      <div class="value" id="battery">--%</div>
+    <!-- Tile 3: Battery -->
+    <div class="tile battery-container">
+      <div>
+        <div class="label">Battery Level</div>
+        <div class="value" id="battery">--</div>
+      </div>
+      <canvas id="batteryGauge"></canvas>
     </div>
 
+    <!-- Tile 4: LED Status -->
     <div class="tile">
       <div class="label">LED Status</div>
       <div class="led-status" id="ledStatus">
-        <div>LED1: <span id="LED1">--</span></div>
-        <div>LED2: <span id="LED2">--</span></div>
-        <div>LED3: <span id="LED3">--</span></div>
-        <div>LED4: <span id="LED4">--</span></div>
-        <div>LED5: <span id="LED5">--</span></div>
-        <div>LED6: <span id="LED6">--</span></div>
+        <div>LED 1: --</div>
+        <div>LED 2: --</div>
+        <div>LED 3: --</div>
+        <div>LED 4: --</div>
+        <div>LED 5: --</div>
+        <div>LED 6: --</div>
       </div>
     </div>
   </div>
