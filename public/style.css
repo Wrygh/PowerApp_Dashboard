@@ -12,7 +12,7 @@ header {
 }
 
 .logo {
-  width: 130px;
+  width: 200px; /* Increased logo size */
   filter: drop-shadow(0 0 15px #00aaff);
 }
 
@@ -56,6 +56,10 @@ header {
   box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
   min-width: 300px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 250px; /* Fixed height for the tiles */
 }
 
 .tile h2 {
@@ -81,9 +85,9 @@ header {
 
 /* Battery gauge customization */
 #batteryGauge {
-  width: 100%;
-  height: 100px; /* Increased height */
-  border-radius: 50px;
+  width: 100%;           /* Full width */
+  height: 70%;           /* Takes up 70% of the tile height */
+  border-radius: 50px;   /* Round edges for the gauge */
   background: linear-gradient(to top, #003366, #00aaff); /* Gradient effect for visual appeal */
   box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
   margin-top: 10px;
@@ -106,4 +110,3 @@ a {
     flex: 1 1 100%;
   }
 }
-
