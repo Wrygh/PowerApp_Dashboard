@@ -1,18 +1,12 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #000000;
+  background-color: #000;
   color: #e0e0e0;
   margin: 0;
   padding: 0;
 }
 
-h1 {
-  color: #0077cc;
-  margin: 20px;
-  font-size: 1.8em;
-  text-align: center;
-}
-
+/* Logo */
 .logo-container {
   display: flex;
   justify-content: center;
@@ -21,44 +15,75 @@ h1 {
 }
 
 .glow-logo {
-  width: 80px;
-  filter: drop-shadow(0 0 15px #004080);
+  width: 120px;
+  filter: drop-shadow(0 0 25px #0077cc);
 }
 
-/* Grid layout */
+/* Title */
+h1.glow-title {
+  text-align: center;
+  font-size: 2.5em;
+  color: #3399ff;
+  text-shadow: 0 0 15px #3399ff, 0 0 30px #004080;
+  margin: 10px 0 5px;
+}
+
+/* Description */
+.description {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto 30px;
+  padding: 0 15px;
+  color: #bbbbbb;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Grid Layout */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 20px;
   padding: 20px;
   max-width: 1400px;
   margin: auto;
 }
 
-/* Tile/card styling */
+/* Tile Cards */
 .tile {
   background-color: #111111;
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 0 15px rgba(0, 85, 160, 0.2);
+  box-shadow: 0 0 20px rgba(0, 119, 204, 0.3);
 }
 
 .tile:hover {
-  box-shadow: 0 0 20px rgba(0, 85, 160, 0.4);
+  box-shadow: 0 0 25px rgba(0, 136, 255, 0.5);
 }
 
+/* Bigger tile */
+.tile-wide {
+  grid-column: span 2;
+}
+
+/* Smaller tile */
+.tile-small {
+  max-width: 350px;
+}
+
+/* Text Styling */
 .label {
-  color: #3399ff;
+  color: #66bfff;
   font-weight: 600;
   margin: 10px 0 5px;
 }
 
 .value {
-  font-size: 1.6em;
+  font-size: 1.8em;
   margin-bottom: 10px;
 }
 
-/* Step count layout */
+/* Chart */
 .step-container {
   display: flex;
   flex-direction: row;
@@ -68,23 +93,18 @@ h1 {
 }
 
 #stepChart {
-  flex: 1;
-  min-width: 200px;
-  max-height: 200px;
+  width: 100%;
+  height: 200px;
 }
 
-.battery-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
-
+/* Battery */
 #batteryGauge {
   max-width: 120px;
   max-height: 120px;
+  margin: auto;
 }
 
+/* LED Status */
 .led-status {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
