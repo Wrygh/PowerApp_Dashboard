@@ -1,55 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PowerApp Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For the gauge -->
+  <meta charset="UTF-8" />
+  <title>PowerStep Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e6f2ff;
+      color: #003366;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #004080;
+      text-shadow: 0 0 10px rgba(0, 136, 255, 0.5);
+    }
+
+    .data-box {
+      margin: 20px auto;
+      padding: 20px;
+      width: 300px;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 136, 255, 0.4);
+    }
+
+    .label {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .value {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .gauge {
+      width: 100%;
+      height: 150px;
+    }
+
+    .led-status {
+      font-size: 1.2em;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: #cce6ff;
+      box-shadow: inset 0 0 10px rgba(0, 136, 255, 0.3);
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>PowerApp Dashboard</h1>
-    </header>
+  <h1>🔋 PowerStep Realtime Dashboard</h1>
 
-    <!-- Logo Section -->
-    <div class="logo-container">
-      <img src="file:///C:/Users/Louise/Downloads/POWERSTEP__1_-removebg-preview.png" alt="POWERSTEP Logo" id="logo">
-    </div>
+  <div class="data-box">
+    <div class="label">Step Count</div>
+    <div class="value" id="stepCount">--</div>
 
-    <!-- Description Section -->
-    <div class="description-container" id="description">
-      <p>
-        POWERSTEP is an innovative IoT system designed for foot traffic monitoring and energy generation through footstep-powered LED lighting.
-        Utilizing advanced piezoelectric technology, it captures the energy produced by footsteps to power LEDs, making it an eco-friendly solution for public spaces.
-        By continuously monitoring foot traffic, POWERSTEP not only lights up pathways but also provides valuable insights into movement patterns,
-        helping optimize space usage and enhance energy efficiency. This system transforms every step into a sustainable source of power while ensuring seamless real-time data transmission.
-      </p>
-    </div>
+    <div class="label">Voltage (V)</div>
+    <div class="value" id="voltage">--</div>
 
-    <!-- Battery Gauge -->
-    <div class="gauge-container">
-      <canvas id="batteryGauge"></canvas>
-    </div>
+    <div class="label">Battery Level</div>
+    <progress id="batteryGauge" class="gauge" max="100" value="0"></progress>
+    <div class="value" id="battery">--</div>
 
-    <!-- Real-time Data Display -->
-    <div class="data-display">
-      <div class="data-item">
-        <p>Step Count:</p>
-        <div id="stepCount">0</div>
-      </div>
-      <div class="data-item">
-        <p>Voltage:</p>
-        <div id="voltage">0V</div>
-      </div>
-      <div class="data-item">
-        <p>LED Status:</p>
-        <div id="ledStatus">Off</div>
-      </div>
-    </div>
+    <div class="label">LED Status</div>
+    <div class="led-status" id="ledStatus">Waiting...</div>
   </div>
 
-  <script src="app.js"></script> <!-- JavaScript for real-time updates -->
+  <script>
+    // Real-time data simulation (replace this with real socket or polling fetch)
+    setInterval(async () => {
+      try {
+        const response = await fetch('/data'); // Endpoint from ESP32
+        const data = await response.json();
+
+        document.getElementById("stepCount").textContent = data.stepCount;
+        document.getElementById("voltage").textContent = data.voltage + " V";
+        document.getElementById("battery").textContent = data.battery + "%";
+        document.getElementById("batteryGauge").value = data.battery;
+        
+        const ledText = (num) => {
+          const state = [
+            "LED 1 ON", "LED 1 OFF", "LED 2 ON", "LED 2 OFF",
+            "LED 3 ON", "LED 3 OFF", "LED 4 ON", "LED 4 OFF",
+            "LED 5 ON", "LED 5 OFF", "LED 6 ON", "LED 6 OFF"
+          ];
+          return state[data.ledStatus - 1] || "Unknown";
+        };
+
+        document.getElementById("ledStatus").textContent = ledText(data.ledStatus);
+      } catch (e) {
+        console.error("Failed to fetch data", e);
+      }
+    }, 1000); // Updates every second
+  </script>
 </body>
 </html>
