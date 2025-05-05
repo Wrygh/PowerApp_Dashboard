@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PowerStep Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
@@ -120,13 +121,14 @@
     }
   </style>
 </head>
+
 <body>
   <img src="logo.png" alt="PowerStep Logo" class="logo" />
 
   <h1 class="glow-title">PowerStep Realtime Dashboard</h1>
 
   <p class="description">
-    <strong>PowerStep</strong> by <strong>ByteForce</strong>, CE students at CVSU-Carmona. <br>
+    <strong>PowerStep</strong> by <strong>ByteForce</strong>, CE students at CVSU-Carmona. <br />
     This dashboard is the server link for real-time monitoring and PowerApp integration.
   </p>
 
@@ -134,6 +136,7 @@
     <!-- Row 1 -->
     <div class="tile tile-step-count">
       <h3>Step Count: <span id="stepCount">--</span></h3>
+      <h3>Today's Footsteps: <span id="todaySteps">--</span></h3>
       <canvas id="stepGraph"></canvas>
     </div>
 
@@ -149,13 +152,12 @@
     <div class="tile tile-led-status">
       <h3>LED Status</h3>
       <div id="ledStatus">
-        LED1: --<br>
-        LED2: --<br>
-        LED3: --<br>
-        LED4: --<br>
-        LED5: --<br>
-        LED6: --<br>
-        Today's Footsteps: <span id="todaySteps">--</span>
+        LED1: --<br />
+        LED2: --<br />
+        LED3: --<br />
+        LED4: --<br />
+        LED5: --<br />
+        LED6: --<br />
       </div>
     </div>
 
@@ -218,7 +220,7 @@
         for (let i = 1; i <= 6; i++) {
           statusText += `LED${i}: ${data['led' + i] || '--'}<br>`;
         }
-        document.getElementById('ledStatus').innerHTML = statusText + `Today's Footsteps: <span id="todaySteps">${data.todaySteps || '--'}</span>`;
+        document.getElementById('ledStatus').innerHTML = statusText;
 
         // Step graph
         if (stepGraph.data.labels.length > 20) {
@@ -236,4 +238,5 @@
     setInterval(fetchData, 1000);
   </script>
 </body>
+
 </html>
