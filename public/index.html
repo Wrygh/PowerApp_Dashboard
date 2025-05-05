@@ -1,84 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PowerStep Dashboard</title>
-
-  <!-- Orbitron Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
+    /* Global Styles */
     body {
-      background: #000;
-      color: #fff;
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Roboto', sans-serif;
+      background-color: #111;
+      color: white;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .logo-title {
-      text-align: center;
-    }
-
-    .logo {
-      width: 120px;
-      filter: drop-shadow(0 0 15px #00bfff);
-    }
-
-    .title {
+    h1 {
       font-size: 2.5em;
       color: #00bfff;
-      text-shadow: 0 0 25px #00bfff;
-      margin: 10px 0;
-    }
-
-    .description {
       text-align: center;
-      max-width: 1000px;
-      margin: 0 auto 40px auto;
-      font-size: 1em;
-      line-height: 1.6;
-      color: #ccc;
+      text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+      margin-top: 50px;
     }
 
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 20px;
-      max-width: 1200px;
-      margin: auto;
+    p.description {
+      text-align: center;
+      font-size: 1.2em;
+      color: #bbb;
+      margin: 20px 0;
+      padding: 0 10px;
+    }
+
+    /* Logo */
+    .logo {
+      display: block;
+      margin: 0 auto;
+      width: 100px;
+      height: auto;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+    }
+
+    /* Container for Tiles */
+    .tile-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 30px auto;
     }
 
     .tile {
-      background: #111;
+      background: #1a1a1a;
+      color: #ffffff;
+      border-radius: 10px;
       padding: 20px;
-      border-radius: 15px;
+      margin: 10px;
+      flex: 1 1 250px;
       box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+      overflow: visible;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
 
-    .tile h2 {
-      margin-bottom: 10px;
-      color: #00bfff;
+    .tile h3 {
+      margin-bottom: 15px;
+      font-size: 1.5em;
     }
 
-    .data {
-      font-size: 2em;
-      font-weight: bold;
-      color: #fff;
-    }
-
+    /* Battery Tile Styles */
     .battery-container {
       position: relative;
       width: 180px;
       height: 180px;
-      margin: auto;
+      margin: 0 auto;
     }
 
     .gauge-circle {
@@ -87,6 +85,7 @@
       border-radius: 50%;
       background: conic-gradient(#00bfff 0%, #111 0%);
       transition: background 0.5s ease;
+      box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
     }
 
     .battery-text {
@@ -95,164 +94,169 @@
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 1.5em;
-      color: #fff;
+      font-weight: bold;
+      color: #ffffff;
     }
 
-    canvas {
-      width: 100% !important;
-      height: 200px !important;
-    }
-
-    .led-status-line {
-      text-align: left;
+    /* Graph styles */
+    #stepGraph {
       width: 100%;
-      font-size: 1em;
-      line-height: 1.6;
+      height: 200px;
+      margin-top: 20px;
     }
 
-    a {
+    /* Flex layout for Step Count and Battery next to each other */
+    .tile-container .tile-step-count,
+    .tile-container .tile-battery {
+      flex: 1 1 40%;
+    }
+
+    /* Voltage and LED Status tile */
+    .tile-voltage,
+    .tile-led-status {
+      flex: 1 1 40%;
+    }
+
+    /* Download Tile Styles */
+    .tile-download {
+      flex: 1 1 100%;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 1.2em;
+    }
+
+    .tile-download a {
       color: #00bfff;
       text-decoration: none;
+      font-weight: bold;
     }
 
-    a:hover {
-      text-decoration: underline;
+    /* Styling for the graph */
+    .graph-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
     }
   </style>
 </head>
-<body>
-  <!-- Header -->
-  <div class="logo-title">
-    <img src="assets/logo.png" class="logo" alt="PowerStep Logo">
-    <h1 class="title">PowerStep Dashboard</h1>
-  </div>
 
-  <!-- Description -->
+<body>
+  <!-- Logo at the top -->
+  <img src="logo.png" alt="PowerStep Logo" class="logo">
+
+  <h1>PowerStep Realtime Dashboard</h1>
   <p class="description">
     <strong>PowerStep</strong> is a project developed by <strong>ByteForce</strong>, a team of Computer Engineering students from <strong>Cavite State University - Carmona Campus</strong>. It is an IoT-based system designed specifically for areas with high foot traffic, such as school hallways and walkways, to monitor movement and convert the energy from footsteps into usable power for LED lighting. By tracking data such as step count, voltage generated, battery level, and LED status, PowerStep promotes sustainability and energy efficiency within the campus.
     <br><br>
     This dashboard serves as a server that integrates the PowerStep system with <strong>PowerApp</strong>—a user-friendly mobile application that provides access to most of the system’s core features through IoT technology.
   </p>
 
-  <!-- Dashboard Tiles -->
-  <div class="dashboard">
-    <!-- Step Count Tile -->
-    <div class="tile steps-tile">
-      <h2>Step Count</h2>
-      <div class="data" id="stepCount">--</div>
-      <h3>Today's Total Steps</h3>
-      <div class="data" id="todaySteps">--</div>
+  <!-- Tile Container -->
+  <div class="tile-container">
+    <!-- Step Count & Graph -->
+    <div class="tile tile-step-count">
+      <h3>Step Count: <span id="stepCount">--</span></h3>
+      <div class="graph-container">
+        <canvas id="stepGraph"></canvas>
+      </div>
     </div>
 
-    <!-- Step Chart -->
-    <div class="tile graph-tile">
-      <h2>Step Tracker</h2>
-      <canvas id="stepChart"></canvas>
-    </div>
-
-    <!-- Battery Level -->
-    <div class="tile battery-tile">
-      <h2>Battery Level</h2>
+    <!-- Battery Tile -->
+    <div class="tile tile-battery">
+      <h3>Battery Level</h3>
       <div class="battery-container">
         <div id="batteryGauge" class="gauge-circle"></div>
         <div id="batteryText" class="battery-text">--%</div>
       </div>
     </div>
 
-    <!-- LED Status -->
-    <div class="tile led-tile">
-      <h2>LED Status</h2>
-      <div class="led-status-line" id="ledStatus">
-        LED1 status: --<br>
-        LED2 status: --<br>
-        LED3 status: --<br>
-        LED4 status: --<br>
-        LED5 status: --<br>
-        LED6 status: --
-      </div>
+    <!-- Voltage Input Tile -->
+    <div class="tile tile-voltage">
+      <h3>Voltage Input</h3>
+      <div id="voltage">--</div>
     </div>
 
-    <!-- Voltage Input -->
-    <div class="tile voltage-tile">
-      <h2>Voltage Input</h2>
-      <div class="data" id="voltage">-- V</div>
+    <!-- LED Status Tile -->
+    <div class="tile tile-led-status">
+      <h3>LED Status</h3>
+      <div id="ledStatus">Loading...</div>
     </div>
 
-    <!-- PowerApp Download -->
-    <div class="tile download-tile">
-      <h2>Download & Install PowerApp</h2>
-      <a href="https://tinyurl.com/PowerAppInstaller" target="_blank">https://tinyurl.com/PowerAppInstaller</a>
+    <!-- Download Tile -->
+    <div class="tile tile-download">
+      <h3>Download & Install PowerApp</h3>
+      <a href="https://tinyurl.com/PowerAppInstaller" target="_blank">Download PowerApp</a>
     </div>
   </div>
 
-  <!-- JS for Data and Chart -->
+  <!-- Script for Chart.js and Data Handling -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const ctx = document.getElementById('stepChart').getContext('2d');
-    const stepChart = new Chart(ctx, {
+    const stepGraphCtx = document.getElementById('stepGraph').getContext('2d');
+    const stepGraph = new Chart(stepGraphCtx, {
       type: 'line',
       data: {
         labels: [],
         datasets: [{
-          label: 'Steps Over Time',
+          label: 'Step Count',
           data: [],
-          backgroundColor: 'rgba(0, 191, 255, 0.2)',
           borderColor: '#00bfff',
-          borderWidth: 2,
-          pointRadius: 2,
-          fill: true,
-          tension: 0.3
+          fill: false,
         }]
       },
       options: {
         scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom',
+          },
           y: {
-            beginAtZero: true,
-            ticks: { stepSize: 1, precision: 0 }
+            min: 0,
+            ticks: {
+              stepSize: 1,
+            }
           }
         }
       }
     });
 
-    let stepHistory = [];
-
+    // Simulate Data (Replace with actual API or real data fetching)
     async function fetchData() {
       try {
-        const res = await fetch('/status');
-        const data = await res.json();
+        const response = await fetch('/status');
+        const data = await response.json();
 
-        // Update text
-        document.getElementById('stepCount').textContent = data.stepCount || '--';
-        document.getElementById('todaySteps').textContent = data.stepCount || '--';
-        document.getElementById('voltage').textContent = (data.voltage || '--') + ' V';
+        // Step Count
+        document.getElementById('stepCount').textContent = data.stepCount;
 
+        // Battery Gauge
         const battery = data.battery || 0;
         document.getElementById('batteryText').textContent = battery + '%';
-        document.getElementById('batteryGauge').style.background = 
-          `conic-gradient(#00bfff ${battery}%, #111 ${battery}%)`;
+        document.getElementById('batteryGauge').style.background = `conic-gradient(#00bfff ${battery}%, #111 ${battery}%)`;
 
-        // LED Statuses
-        let ledHTML = '';
-        for (let i = 1; i <= 6; i++) {
-          const status = data.ledStatus && data.ledStatus['LED' + i] ? data.ledStatus['LED' + i] : '--';
-          ledHTML += `LED${i} status: ${status}<br>`;
+        // Voltage
+        document.getElementById('voltage').textContent = `${data.voltage} V`;
+
+        // LED Status
+        const ledStatusText = ['LED 1 OFF', 'LED 1 ON', 'LED 2 OFF', 'LED 2 ON', 'LED 3 OFF', 'LED 3 ON'][data.ledStatus - 1] || 'Unknown';
+        document.getElementById('ledStatus').textContent = ledStatusText;
+
+        // Update Step Graph
+        if (stepGraph.data.labels.length > 10) {
+          stepGraph.data.labels.shift();
+          stepGraph.data.datasets[0].data.shift();
         }
-        document.getElementById('ledStatus').innerHTML = ledHTML;
-
-        // Update chart
-        const now = new Date();
-        const label = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-        if (stepHistory.length >= 10) stepHistory.shift();
-        stepHistory.push({ x: label, y: data.stepCount || 0 });
-
-        stepChart.data.labels = stepHistory.map(d => d.x);
-        stepChart.data.datasets[0].data = stepHistory.map(d => d.y);
-        stepChart.update();
-      } catch (e) {
-        console.error('Fetch failed', e);
+        stepGraph.data.labels.push(Date.now());
+        stepGraph.data.datasets[0].data.push(data.stepCount);
+        stepGraph.update();
+      } catch (error) {
+        console.error("Error fetching data", error);
       }
     }
 
-    setInterval(fetchData, 1000);
+    setInterval(fetchData, 1000); // Update data every second
   </script>
 </body>
+
 </html>
