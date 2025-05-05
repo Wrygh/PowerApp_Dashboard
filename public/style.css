@@ -53,8 +53,8 @@ h1.glow-title {
 
 .tile-battery .battery-container {
   position: relative;
-  width: 150px;
-  height: 150px;
+  width: 120px;  /* Adjusted width */
+  height: 120px; /* Adjusted height */
   margin: auto;
 }
 
@@ -74,7 +74,7 @@ h1.glow-title {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 1.5em;
+  font-size: 1.2em; /* Slightly smaller font size for better fit */
 }
 
 .tile-led-status {
@@ -113,4 +113,3 @@ h3 {
     flex: 1 1 100%;
   }
 }
-
