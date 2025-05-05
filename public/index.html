@@ -8,25 +8,25 @@
 </head>
 <body>
   <header>
-    <img src="assets/logo.png" alt="PowerStep Logo" class="logo" />
+    <img src="logo.png" alt="PowerStep Logo" class="logo" />
     <h1 class="title">PowerStep Realtime Dashboard</h1>
     <p class="description">
       PowerStep is an energy-aware step tracking system developed by <strong>ByteForce</strong>, a Computer Engineering student at <strong>Cavite State University - Carmona Campus</strong>. 
-      This dashboard displays real-time data for step activity, battery health, voltage, and system status. Monitor your embedded system performance live, and stay charged with PowerStep.
+      This dashboard displays real-time data for step activity, battery health, voltage input, and LED system statuses. Monitor your embedded system's performance live — fast, efficient, and smart.
     </p>
   </header>
 
   <main class="tiles">
     <!-- Top Row -->
     <div class="top-row">
-      <div class="tile tile-step">
+      <div class="tile half tile-step">
         <h2>Step Count</h2>
         <div class="value" id="stepCount">--</div>
         <div class="label">Step count for today:</div>
         <div class="value" id="stepCountTotal">--</div>
         <canvas id="stepChart"></canvas>
       </div>
-      <div class="tile tile-battery">
+      <div class="tile half tile-battery">
         <h2>Battery Level</h2>
         <canvas id="batteryGauge" width="150" height="150"></canvas>
         <div class="value" id="battery">--</div>
