@@ -157,6 +157,7 @@
     <!-- Step Count & Graph -->
     <div class="tile tile-step-count">
       <h3>Step Count: <span id="stepCount">--</span></h3>
+      <p id="todayStepCount">Today's Footstep: --</p>
       <div class="graph-container">
         <canvas id="stepGraph"></canvas>
       </div>
@@ -180,7 +181,12 @@
     <!-- LED Status Tile -->
     <div class="tile tile-led-status">
       <h3>LED Status</h3>
-      <div id="ledStatus">Loading...</div>
+      <p id="led1">LED 1: OFF</p>
+      <p id="led2">LED 2: OFF</p>
+      <p id="led3">LED 3: OFF</p>
+      <p id="led4">LED 4: OFF</p>
+      <p id="led5">LED 5: OFF</p>
+      <p id="led6">LED 6: OFF</p>
     </div>
 
     <!-- Download Tile -->
@@ -229,6 +235,7 @@
 
         // Step Count
         document.getElementById('stepCount').textContent = data.stepCount;
+        document.getElementById('todayStepCount').textContent = `Today's Footstep: ${data.todayStepCount}`;
 
         // Battery Gauge
         const battery = data.battery || 0;
@@ -239,8 +246,12 @@
         document.getElementById('voltage').textContent = `${data.voltage} V`;
 
         // LED Status
-        const ledStatusText = ['LED 1 OFF', 'LED 1 ON', 'LED 2 OFF', 'LED 2 ON', 'LED 3 OFF', 'LED 3 ON'][data.ledStatus - 1] || 'Unknown';
-        document.getElementById('ledStatus').textContent = ledStatusText;
+        document.getElementById('led1').textContent = `LED 1: ${data.led1Status ? 'ON' : 'OFF'}`;
+        document.getElementById('led2').textContent = `LED 2: ${data.led2Status ? 'ON' : 'OFF'}`;
+        document.getElementById('led3').textContent = `LED 3: ${data.led3Status ? 'ON' : 'OFF'}`;
+        document.getElementById('led4').textContent = `LED 4: ${data.led4Status ? 'ON' : 'OFF'}`;
+        document.getElementById('led5').textContent = `LED 5: ${data.led5Status ? 'ON' : 'OFF'}`;
+        document.getElementById('led6').textContent = `LED 6: ${data.led6Status ? 'ON' : 'OFF'}`;
 
         // Update Step Graph
         if (stepGraph.data.labels.length > 10) {
