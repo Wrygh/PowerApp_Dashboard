@@ -1,31 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>POWERSTEP Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerApp Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For the gauge -->
 </head>
 <body>
-  <h1>POWERSTEP Dashboard</h1>
   <div class="container">
-    <div class="card">
-      <h2>Step Count</h2>
-      <p id="stepCount">0</p>
+    <header>
+      <h1>PowerApp Dashboard</h1>
+    </header>
+
+    <!-- Logo Section -->
+    <div class="logo-container">
+      <img src="path/to/your/logo.png" alt="POWERSTEP Logo" id="logo">
     </div>
-    <div class="card">
-      <h2>Voltage</h2>
-      <p id="voltage">0</p>
+
+    <!-- Description Section -->
+    <div class="description-container" id="description">
+      <p>
+        POWERSTEP is an innovative IoT system designed for foot traffic monitoring and energy generation through footstep-powered LED lighting.
+        Utilizing advanced piezoelectric technology, it captures the energy produced by footsteps to power LEDs, making it an eco-friendly solution for public spaces.
+        By continuously monitoring foot traffic, POWERSTEP not only lights up pathways but also provides valuable insights into movement patterns,
+        helping optimize space usage and enhance energy efficiency. This system transforms every step into a sustainable source of power while ensuring seamless real-time data transmission.
+      </p>
     </div>
-    <div class="card">
-      <h2>Battery Status</h2>
-      <p id="battery">Unknown</p>
+
+    <!-- Battery Gauge -->
+    <div class="gauge-container">
+      <canvas id="batteryGauge"></canvas>
     </div>
-    <div class="card">
-      <h2>LED Status</h2>
-      <ul id="ledStatusList"></ul>
+
+    <!-- Real-time Data Display -->
+    <div class="data-display">
+      <div class="data-item">
+        <p>Step Count:</p>
+        <div id="stepCount">0</div>
+      </div>
+      <div class="data-item">
+        <p>Voltage:</p>
+        <div id="voltage">0V</div>
+      </div>
+      <div class="data-item">
+        <p>LED Status:</p>
+        <div id="ledStatus">Off</div>
+      </div>
     </div>
   </div>
-  <script src="script.js"></script>
+
+  <script src="app.js"></script> <!-- JavaScript for real-time updates -->
 </body>
 </html>
