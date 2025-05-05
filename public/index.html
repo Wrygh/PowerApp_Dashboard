@@ -11,11 +11,18 @@
     <img src="logo.png" alt="PowerStep Logo" class="glow-logo">
   </div>
 
-  <h1>PowerStep Realtime Dashboard</h1>
+  <h1 class="glow-title">PowerStep Realtime Dashboard</h1>
+
+  <p class="description">
+    <strong>PowerStep</strong> is an innovative energy monitoring system developed by <strong>ByteForce</strong>,
+    a team of Computer Engineering students at <em>Cavite State University – Carmona Campus</em>. This dashboard provides real-time visualization
+    of step-generated power, voltage input, battery level, and LED statuses using IoT technologies. Designed for precision and simplicity,
+    the interface allows users to track energy efficiency and hardware status clearly and professionally.
+  </p>
 
   <div class="grid">
-    <!-- Tile 1: Step Count -->
-    <div class="tile">
+    <!-- Step Count (Bigger) -->
+    <div class="tile tile-wide">
       <div class="label">Step Count</div>
       <div class="value" id="stepCount">--</div>
       <div class="label">Today's Total</div>
@@ -25,22 +32,20 @@
       </div>
     </div>
 
-    <!-- Tile 2: Voltage -->
-    <div class="tile">
+    <!-- Voltage Input (Smaller) -->
+    <div class="tile tile-small">
       <div class="label">Voltage Input</div>
       <div class="value" id="voltage">--</div>
     </div>
 
-    <!-- Tile 3: Battery -->
-    <div class="tile battery-container">
-      <div>
-        <div class="label">Battery Level</div>
-        <div class="value" id="battery">--</div>
-      </div>
+    <!-- Battery -->
+    <div class="tile">
+      <div class="label">Battery Level</div>
+      <div class="value" id="battery">--</div>
       <canvas id="batteryGauge"></canvas>
     </div>
 
-    <!-- Tile 4: LED Status -->
+    <!-- LED Status -->
     <div class="tile">
       <div class="label">LED Status</div>
       <div class="led-status" id="ledStatus">
