@@ -2,48 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PowerStep Dashboard</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="PowerStep Logo" class="logo" />
+    <img src="logo.png" alt="Logo" class="logo" />
     <h1 class="title">PowerStep Realtime Dashboard</h1>
     <p class="description">
-      PowerStep is an energy-aware step tracking system developed by <strong>ByteForce</strong>, a group Computer Engineering students at <strong>Cavite State University - Carmona Campus</strong>. 
-      This dashboard displays real-time data for step activity, battery health, voltage input, and LED system statuses. Monitor your embedded system's performance live — fast, efficient, and smart.
+      PowerStep is an energy-aware step-tracking system developed by <strong>ByteForce</strong>, a group of Computer Engineering students at <strong>Cavite State University – Carmona Campus</strong>.<br>
+      This dashboard provides real-time insights into step activity, battery health, voltage input, and LED system status. Monitor your embedded system’s performance live — fast, efficient, and intelligent.
     </p>
   </header>
 
-  <main class="dashboard">
-    <!-- Top Row -->
+  <div class="dashboard">
+    <!-- Row 1 -->
     <div class="row">
       <div class="tile">
         <h2>Step Count</h2>
         <div class="value" id="stepCount">--</div>
-        <div class="label">Step count for today:</div>
-        <div class="value" id="stepCountTotal">--</div>
+        <div class="label">Today</div>
+        <div class="value" id="dailyStepCount">--</div>
         <canvas id="stepChart"></canvas>
       </div>
       <div class="tile">
         <h2>Battery Level</h2>
-        <canvas id="batteryGauge" width="150" height="150"></canvas>
-        <div class="value" id="battery">--</div>
+        <div class="circular-gauge-container">
+          <div class="circular-gauge" id="batteryCircle">--%</div>
+        </div>
       </div>
     </div>
 
-    <!-- Bottom Row -->
+    <!-- Row 2 -->
     <div class="row">
       <div class="tile">
         <h2>Voltage Input</h2>
-        <div class="value" id="voltage">--</div>
+        <div class="value" id="voltage">-- V</div>
       </div>
       <div class="tile">
         <h2>LED Status</h2>
-        <div id="ledStatus" class="led-list">
+        <div class="led-list" id="ledStatus">
           <div>LED 1: --</div>
           <div>LED 2: --</div>
           <div>LED 3: --</div>
@@ -52,14 +52,17 @@
           <div>LED 6: --</div>
         </div>
       </div>
-      <div class="tile">
+    </div>
+
+    <!-- Row 3 -->
+    <div class="row">
+      <div class="tile download-tile">
         <h2>Download & Install PowerApp</h2>
         <p><a href="https://tinyurl.com/PowerAppInstaller" target="_blank">https://tinyurl.com/PowerAppInstaller</a></p>
       </div>
     </div>
-  </main>
+  </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
