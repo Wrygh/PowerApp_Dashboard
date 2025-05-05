@@ -1,68 +1,74 @@
+/* Global Styles */
 body {
-  background: #000;
-  color: #fff;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  background-color: #111;
+  color: white;
   margin: 0;
-  padding: 20px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.logo-title {
-  text-align: center;
-}
-
-.logo {
-  width: 120px;
-  filter: drop-shadow(0 0 10px #00f);
-}
-
-.title {
+h1 {
   font-size: 2.5em;
-  text-shadow: 0 0 20px #00bfff;
-  margin: 10px 0;
-}
-
-.description {
+  color: #00bfff;
   text-align: center;
-  max-width: 1000px;
-  margin: 0 auto 40px auto;
-  font-size: 1em;
-  line-height: 1.6;
-  color: #ccc;
+  text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+  margin-top: 50px;
 }
 
-.dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
-  max-width: 1200px;
-  margin: auto;
+p.description {
+  text-align: center;
+  font-size: 1.2em;
+  color: #bbb;
+  margin: 20px 0;
+  padding: 0 10px;
 }
 
+/* Logo */
+.logo {
+  display: block;
+  margin: 0 auto;
+  width: 120px; /* Adjust the size of the logo */
+  height: auto;
+  margin-bottom: 20px;
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+}
+
+/* Container for Tiles */
+.tile-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 30px auto;
+}
+
+/* Individual Tiles */
 .tile {
-  background: #111;
+  background: #1a1a1a;
+  color: #ffffff;
+  border-radius: 10px;
   padding: 20px;
-  border-radius: 15px;
+  margin: 10px;
+  flex: 1 1 250px;
   box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
-.tile h2 {
-  margin-bottom: 10px;
-  color: #00bfff;
+.tile h3 {
+  margin-bottom: 15px;
+  font-size: 1.5em;
 }
 
-.data {
-  font-size: 2em;
-  font-weight: bold;
-  color: #fff;
-}
-
+/* Battery Tile Styles */
 .battery-container {
   position: relative;
-  width: 150px;
-  height: 150px;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto;
 }
 
 .gauge-circle {
@@ -71,6 +77,7 @@ body {
   border-radius: 50%;
   background: conic-gradient(#00bfff 0%, #111 0%);
   transition: background 0.5s ease;
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
 }
 
 .battery-text {
@@ -79,10 +86,55 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.5em;
-  color: #fff;
+  font-weight: bold;
+  color: #ffffff;
 }
 
-canvas {
-  width: 100% !important;
-  height: 200px !important;
+/* Graph styles */
+#stepGraph {
+  width: 100%;
+  height: 200px;
+  margin-top: 20px;
+}
+
+/* Flex layout for Step Count and Battery next to each other */
+.tile-container .tile-step-count,
+.tile-container .tile-battery {
+  flex: 1 1 40%;
+}
+
+/* Voltage and LED Status tile */
+.tile-voltage,
+.tile-led-status {
+  flex: 1 1 40%;
+}
+
+/* Download Tile Styles */
+.tile-download {
+  flex: 1 1 100%;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 1.2em;
+}
+
+.tile-download a {
+  color: #00bfff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Styling for the graph */
+.graph-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Tooltip for graph */
+.chartjs-tooltip {
+  background-color: #000;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px;
 }
