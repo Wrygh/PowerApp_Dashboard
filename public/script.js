@@ -1,14 +1,16 @@
-const stepGraph = document.getElementById("stepGraph").getContext("2d");
-
-const myChart = new Chart(stepGraph, {
-  type: "line",
+// Initialize chart
+const ctx = document.getElementById('stepChart').getContext('2d');
+const stepChart = new Chart(ctx, {
+  type: 'line',
   data: {
-    labels: ["0h", "1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h"],
+    labels: Array.from({ length: 10 }, (_, i) => `T-${9 - i}`),
     datasets: [{
-      label: 'Step Count',
-      data: [0, 20, 30, 40, 45, 50, 60, 70, 80, 100, 120, 150],
-      borderColor: "#00bfff",
-      backgroundColor: "rgba(0, 191, 255, 0.3)",
+      label: 'Steps',
+      data: Array(10).fill(0),
+      backgroundColor: 'rgba(0, 191, 255, 0.2)',
+      borderColor: '#00bfff',
+      borderWidth: 2,
+      tension: 0.3,
       fill: true,
     }]
   },
@@ -17,35 +19,60 @@ const myChart = new Chart(stepGraph, {
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          color: '#ffffff'
+        },
+        grid: {
+          color: '#333333'
+        }
+      },
+      x: {
+        ticks: {
+          color: '#ffffff'
+        },
+        grid: {
+          color: '#333333'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: '#ffffff'
+        }
       }
     }
   }
 });
 
-// Simulated real-time data
-setInterval(async () => {
-  // Example data - Replace with actual API response
-  const data = {
-    stepCount: Math.floor(Math.random() * 100),
-    battery: Math.floor(Math.random() * 100),
-    voltage: (Math.random() * 5).toFixed(2),
-    ledStatus: "LED 1 ON",
-  };
+// Function to simulate data updates
+function simulateData() {
+  const stepCount = Math.floor(Math.random() * 1000);
+  const todaySteps = Math.floor(Math.random() * 5000);
+  const batteryLevel = Math.floor(Math.random() * 100);
+  const voltage = (Math.random() * 5).toFixed(2);
+  const ledStatus = Math.random() > 0.5 ? 'ON' : 'OFF';
 
-  // Update Step Count
-  document.getElementById("stepCount").textContent = data.stepCount;
-  document.getElementById("todaySteps").textContent = data.stepCount; // For today
-  myChart.data.datasets[0].data.push(data.stepCount);
-  myChart.data.datasets[0].data.shift();
-  myChart.update();
+  // Update DOM elements
+  document.getElementById('stepCount').textContent = stepCount;
+  document.getElementById('todaySteps').textContent = todaySteps;
+  document.getElementById('voltage').textContent = `${voltage} V`;
+  document.getElementById('ledStatus').textContent = ledStatus;
 
-  // Update Battery Level Gauge
-  document.getElementById("battery").textContent = `${data.battery}%`;
-  document.getElementById("batteryGauge").style.background = `conic-gradient(#00bfff ${data.battery}% , #1e1e1e 0%)`;
+  // Update battery gauge
+  const batteryFill = document.getElementById('batteryFill');
+  const batteryText = document.getElementById('batteryText');
+  batteryFill.style.background = `conic-gradient(#00bfff ${batteryLevel}%, #1e1e1e 0%)`;
+  batteryText.textContent = `${batteryLevel}%`;
 
-  // Update Voltage
-  document.getElementById("voltage").textContent = `${data.voltage} V`;
+  // Update chart
+  stepChart.data.datasets[0].data.push(stepCount);
+  stepChart.data.datasets[0].data.shift();
+  stepChart.update();
+}
 
-  // Update LED Status
-  document.getElementById("ledStatus").textContent = data.ledStatus;
-}, 1000);
+// Initial data simulation
+simulateData();
+
+// Update data every second
+setInterval(simulateData, 1000);
