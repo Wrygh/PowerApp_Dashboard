@@ -1,0 +1,13 @@
+{
+  "stepCount": 0,
+  "voltage": 0,
+  "battery": "Unknown",
+  "ledStatus": {
+    "LED1": "OFF",
+    "LED2": "OFF",
+    "LED3": "OFF",
+    "LED4": "OFF",
+    "LED5": "OFF",
+    "LED6": "OFF"
+  }
+}
