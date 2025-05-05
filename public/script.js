@@ -15,6 +15,7 @@ const stepChart = new Chart(document.getElementById('stepChart').getContext('2d'
   },
   options: {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
@@ -57,20 +58,20 @@ async function fetchData() {
     }
     document.getElementById("ledStatus").innerHTML = ledHTML;
 
-    // Battery Gauge
+    // Battery Circle
     const batteryValue = data.battery || 0;
     const batteryCircle = document.getElementById("batteryCircle");
     batteryCircle.setAttribute("data-label", `${batteryValue}%`);
     batteryCircle.style.background = `conic-gradient(#00aaff 0% ${batteryValue}%, #222 ${batteryValue}% 100%)`;
 
-    // Chart Update
+    // Update chart
+    const currentHour = new Date().getHours();
     if (dataPoints >= 24) {
       stepChart.data.labels.shift();
       stepChart.data.datasets[0].data.shift();
     }
 
-    const currentHour = new Date().getHours();
-    stepChart.data.labels.push(currentHour + ":00");
+    stepChart.data.labels.push(`${currentHour}:00`);
     stepChart.data.datasets[0].data.push(data.stepCount || 0);
     stepChart.update();
     dataPoints++;
