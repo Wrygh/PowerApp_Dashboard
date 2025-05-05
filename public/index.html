@@ -8,7 +8,7 @@
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="PowerStep Logo" class="logo" />
+    <img src="assets/logo.png" alt="PowerStep Logo" class="logo" />
     <h1 class="title">PowerStep Realtime Dashboard</h1>
     <p class="description">
       PowerStep is an energy-aware step tracking system developed by <strong>ByteForce</strong>, a Computer Engineering student at <strong>Cavite State University - Carmona Campus</strong>. 
@@ -16,17 +16,17 @@
     </p>
   </header>
 
-  <main class="tiles">
+  <main class="dashboard">
     <!-- Top Row -->
-    <div class="top-row">
-      <div class="tile half tile-step">
+    <div class="row">
+      <div class="tile">
         <h2>Step Count</h2>
         <div class="value" id="stepCount">--</div>
         <div class="label">Step count for today:</div>
         <div class="value" id="stepCountTotal">--</div>
         <canvas id="stepChart"></canvas>
       </div>
-      <div class="tile half tile-battery">
+      <div class="tile">
         <h2>Battery Level</h2>
         <canvas id="batteryGauge" width="150" height="150"></canvas>
         <div class="value" id="battery">--</div>
@@ -34,13 +34,12 @@
     </div>
 
     <!-- Bottom Row -->
-    <div class="bottom-row">
-      <div class="tile tile-voltage">
+    <div class="row">
+      <div class="tile">
         <h2>Voltage Input</h2>
         <div class="value" id="voltage">--</div>
       </div>
-
-      <div class="tile tile-led">
+      <div class="tile">
         <h2>LED Status</h2>
         <div id="ledStatus" class="led-list">
           <div>LED 1: --</div>
@@ -51,8 +50,7 @@
           <div>LED 6: --</div>
         </div>
       </div>
-
-      <div class="tile tile-app">
+      <div class="tile">
         <h2>Download & Install PowerApp</h2>
         <p><a href="https://tinyurl.com/PowerAppInstaller" target="_blank">https://tinyurl.com/PowerAppInstaller</a></p>
       </div>
@@ -62,3 +60,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
