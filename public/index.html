@@ -2,67 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PowerStep Realtime Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PowerStep Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
-    <h1>
-      <img src="images/logo.png" alt="PowerStep Logo" class="logo">
-      PowerStep Realtime Dashboard
-    </h1>
+    <img src="logo.png" alt="PowerStep Logo" class="logo" />
+    <h1>PowerStep Dashboard</h1>
+    <p>Developed by ByteForce | Cavite State University - Carmona Campus</p>
   </header>
 
-  <div class="description">
-    <p>
-      <strong>PowerStep</strong> is a project developed by <strong>ByteForce</strong>, a team of Computer Engineering students from <strong>Cavite State University - Carmona Campus</strong>. It is an IoT-based system designed specifically for areas with high foot traffic, such as school hallways and walkways, to monitor movement and convert the energy from footsteps into usable power for LED lighting. By tracking data such as step count, voltage generated, battery level, and LED status, PowerStep promotes sustainability and energy efficiency within the campus.
-    </p>
-    <p>
-      This dashboard serves as a server that integrates the PowerStep system with <strong>PowerApp</strong>—a user-friendly mobile application that provides access to most of the system’s core features through IoT technology.
-    </p>
-  </div>
-
-  <div class="tiles-container">
-    <!-- Tile 1: Step Count & Battery Level -->
-    <div class="tile">
-      <h3>Step Count</h3>
-      <p id="stepCount">--</p>
-      <p>Steps for Today: <span id="todaySteps">--</span></p>
-    </div>
-    <div class="tile">
-      <h3>Battery Level</h3>
-      <div class="gauge">
-        <div class="circle" id="batteryGauge"></div>
+  <main>
+    <div class="tiles-container">
+      <div class="tile">
+        <h3>Step Count</h3>
+        <p id="stepCount">0</p>
       </div>
-      <p id="battery">--%</p>
+      <div class="tile">
+        <h3>Today's Steps</h3>
+        <p id="todaySteps">0</p>
+      </div>
+      <div class="tile">
+        <h3>Battery Level</h3>
+        <div class="battery-gauge">
+          <div class="battery-fill" id="batteryFill"></div>
+          <span id="batteryText">0%</span>
+        </div>
+      </div>
+      <div class="tile">
+        <h3>Voltage</h3>
+        <p id="voltage">0 V</p>
+      </div>
+      <div class="tile">
+        <h3>LED Status</h3>
+        <p id="ledStatus">OFF</p>
+      </div>
     </div>
 
-    <!-- Tile 2: Voltage & LED Status -->
-    <div class="tile">
-      <h3>Voltage Input</h3>
-      <p id="voltage">-- V</p>
-    </div>
-    <div class="tile">
-      <h3>LED Status</h3>
-      <p id="ledStatus">Waiting...</p>
-    </div>
+    <section class="chart-section">
+      <h3>Step Count Over Time</h3>
+      <canvas id="stepChart"></canvas>
+    </section>
+  </main>
 
-    <!-- Tile 3: Download & Install PowerApp -->
-    <div class="tile">
-      <h3>Download & Install PowerApp</h3>
-      <p><a href="https://tinyurl.com/PowerAppInstaller" target="_blank">Click here to download</a></p>
-    </div>
-  </div>
-
-  <div class="graph-container">
-    <div class="chart-container">
-      <canvas id="stepGraph"></canvas>
-    </div>
-  </div>
+  <footer>
+    <p>&copy; 2025 ByteForce. All rights reserved.</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
 </html>
-
