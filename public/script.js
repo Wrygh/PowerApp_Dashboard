@@ -1,50 +1,16 @@
-setInterval(async () => {
-  try {
-    const response = await fetch('/status');
-    const data = await response.json();
-
-    document.getElementById("stepCount").textContent = data.stepCount || 0;
-    document.getElementById("dailyStepCount").textContent = data.stepCount || 0;
-    document.getElementById("voltage").textContent = data.voltage + " V";
-    document.getElementById("batteryCircle").textContent = data.battery + "%";
-    document.getElementById("batteryCircle").style.background =
-      `conic-gradient(#00aaff 0% ${data.battery}%, #333 ${data.battery}% 100%)`;
-
-    const ledStatusDiv = document.getElementById("ledStatus");
-    ledStatusDiv.innerHTML = "";
-    for (let i = 1; i <= 6; i++) {
-      const ledKey = "LED" + i;
-      const state = data.ledStatus && data.ledStatus[ledKey] ? data.ledStatus[ledKey] : "--";
-      const div = document.createElement("div");
-      div.textContent = `${ledKey}: ${state}`;
-      ledStatusDiv.appendChild(div);
-    }
-
-    const now = new Date();
-    const time = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
-    stepChart.data.labels.push(time);
-    stepChart.data.datasets[0].data.push(data.stepCount);
-    if (stepChart.data.labels.length > 20) {
-      stepChart.data.labels.shift();
-      stepChart.data.datasets[0].data.shift();
-    }
-    stepChart.update();
-  } catch (e) {
-    console.error("Failed to fetch data", e);
-  }
-}, 1000);
-
-const stepChart = new Chart(document.getElementById('stepChart'), {
+const stepChart = new Chart(document.getElementById('stepChart').getContext('2d'), {
   type: 'line',
   data: {
     labels: [],
     datasets: [{
-      label: 'Step Count',
+      label: 'Steps Over Time',
       data: [],
+      backgroundColor: 'rgba(0,170,255,0.1)',
       borderColor: '#00aaff',
-      backgroundColor: 'transparent',
       borderWidth: 2,
-      tension: 0.2
+      pointRadius: 2,
+      fill: true,
+      tension: 0.3
     }]
   },
   options: {
@@ -52,18 +18,67 @@ const stepChart = new Chart(document.getElementById('stepChart'), {
     scales: {
       y: {
         beginAtZero: true,
-        ticks: { color: '#fff' },
-        grid: { color: '#444' }
+        ticks: {
+          color: "#ffffff"
+        }
       },
       x: {
-        ticks: { color: '#fff' },
-        grid: { color: '#444' }
+        ticks: {
+          color: "#ffffff"
+        }
       }
     },
     plugins: {
       legend: {
-        labels: { color: '#00aaff' }
+        labels: {
+          color: "#ffffff"
+        }
       }
     }
   }
 });
+
+let dataPoints = 0;
+
+async function fetchData() {
+  try {
+    const response = await fetch('/status');
+    const data = await response.json();
+
+    document.getElementById("stepCount").textContent = data.stepCount || "--";
+    document.getElementById("voltage").textContent = (data.voltage || "--") + " V";
+
+    // LED Status
+    const ledStatuses = data.ledStatus || {};
+    let ledHTML = "";
+    for (let i = 1; i <= 6; i++) {
+      const status = ledStatuses[`LED${i}`] || "--";
+      ledHTML += `<p>LED ${i}: ${status}</p>`;
+    }
+    document.getElementById("ledStatus").innerHTML = ledHTML;
+
+    // Battery Gauge
+    const batteryValue = data.battery || 0;
+    const batteryCircle = document.getElementById("batteryCircle");
+    batteryCircle.setAttribute("data-label", `${batteryValue}%`);
+    batteryCircle.style.background = `conic-gradient(#00aaff 0% ${batteryValue}%, #222 ${batteryValue}% 100%)`;
+
+    // Chart Update
+    if (dataPoints >= 24) {
+      stepChart.data.labels.shift();
+      stepChart.data.datasets[0].data.shift();
+    }
+
+    const currentHour = new Date().getHours();
+    stepChart.data.labels.push(currentHour + ":00");
+    stepChart.data.datasets[0].data.push(data.stepCount || 0);
+    stepChart.update();
+    dataPoints++;
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+setInterval(fetchData, 2000); // 2s interval
+fetchData();
