@@ -1,115 +1,102 @@
+/* General */
 body {
+  margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background-color: #000;
-  color: #e0e0e0;
-  margin: 0;
-  padding: 0;
+  color: #fff;
 }
 
-/* Logo */
-.logo-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.glow-logo {
-  width: 120px;
-  filter: drop-shadow(0 0 25px #0077cc);
-}
-
-/* Title */
-h1.glow-title {
+header {
   text-align: center;
-  font-size: 2.5em;
-  color: #3399ff;
-  text-shadow: 0 0 15px #3399ff, 0 0 30px #004080;
-  margin: 10px 0 5px;
-}
-
-/* Description */
-.description {
-  text-align: center;
-  max-width: 900px;
-  margin: 0 auto 30px;
-  padding: 0 15px;
-  color: #bbbbbb;
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-/* Grid Layout */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
   padding: 20px;
-  max-width: 1400px;
-  margin: auto;
 }
 
-/* Tile Cards */
+.logo {
+  width: 130px;
+  filter: drop-shadow(0 0 15px #00aaff);
+}
+
+.title {
+  font-size: 2.8em;
+  color: #00aaff;
+  text-shadow: 0 0 20px #00aaff;
+}
+
+.description {
+  color: #ccc;
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: 1em;
+  padding-top: 10px;
+}
+
+/* Layout */
+.dashboard {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Tiles */
 .tile {
-  background-color: #111111;
+  flex: 1 1 32%;
+  background-color: #1a1a1a;
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 0 20px rgba(0, 119, 204, 0.3);
+  box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
+  min-width: 300px;
 }
 
-.tile:hover {
-  box-shadow: 0 0 25px rgba(0, 136, 255, 0.5);
-}
-
-/* Bigger tile */
-.tile-wide {
-  grid-column: span 2;
-}
-
-/* Smaller tile */
-.tile-small {
-  max-width: 350px;
-}
-
-/* Text Styling */
-.label {
-  color: #66bfff;
-  font-weight: 600;
-  margin: 10px 0 5px;
+.tile h2 {
+  color: #00aaff;
+  text-shadow: 0 0 10px #00aaff;
 }
 
 .value {
-  font-size: 1.8em;
-  margin-bottom: 10px;
+  font-size: 2em;
+  margin: 10px 0;
+  color: #ffffff;
 }
 
-/* Chart */
-.step-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
+.label {
+  font-weight: bold;
+  margin-top: 10px;
+  color: #bbb;
 }
 
+.led-list div {
+  margin: 4px 0;
+}
+
+/* Graph & Battery */
 #stepChart {
   width: 100%;
-  height: 200px;
+  max-height: 200px;
+  margin-top: 15px;
 }
 
-/* Battery */
 #batteryGauge {
-  max-width: 120px;
-  max-height: 120px;
-  margin: auto;
+  margin-top: 15px;
 }
 
-/* LED Status */
-.led-status {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 10px;
-  font-size: 1em;
-  color: #cccccc;
+a {
+  color: #00aaff;
+  text-decoration: underline;
 }
+
+@media (max-width: 768px) {
+  .tile {
+    flex: 1 1 100%;
+  }
+}
+
