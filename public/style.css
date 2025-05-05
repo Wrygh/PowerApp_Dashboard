@@ -28,7 +28,7 @@ p.description {
 .logo {
   display: block;
   margin: 0 auto;
-  width: 120px; /* Adjust the size of the logo */
+  width: 100px;
   height: auto;
   margin-bottom: 20px;
   box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
@@ -42,7 +42,6 @@ p.description {
   margin: 30px auto;
 }
 
-/* Individual Tiles */
 .tile {
   background: #1a1a1a;
   color: #ffffff;
@@ -61,6 +60,11 @@ p.description {
 .tile h3 {
   margin-bottom: 15px;
   font-size: 1.5em;
+}
+
+.tile p {
+  margin-bottom: 10px;
+  font-size: 1em;
 }
 
 /* Battery Tile Styles */
@@ -131,10 +135,33 @@ p.description {
   margin-top: 20px;
 }
 
-/* Tooltip for graph */
-.chartjs-tooltip {
-  background-color: #000;
-  color: #fff;
-  border-radius: 5px;
-  padding: 10px;
+/* LED Status Styles */
+.tile-led-status p {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
+
+.tile-container .tile-step-count,
+.tile-container .tile-battery,
+.tile-container .tile-voltage,
+.tile-container .tile-led-status {
+  min-width: 250px;
+}
+
+.tile-container .tile-step-count,
+.tile-container .tile-voltage {
+  flex: 1 1 40%;
+}
+
+.tile-container .tile-download {
+  flex: 1 1 100%;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 1.2em;
+}
+
+.tile-container .tile-download a {
+  color: #00bfff;
+  text-decoration: none;
+  font-weight: bold;
 }
