@@ -1,42 +1,84 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  background-color: #000;
+  color: #fff;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
 .logo {
-  width: 200px;
-  filter: drop-shadow(0 0 15px #00aaff);
+  width: 100px;
+  filter: drop-shadow(0 0 20px #00aaff);
 }
 
 .title {
-  font-size: 2.8em;
+  font-size: 2.5em;
   color: #00aaff;
-  text-shadow: 0 0 20px #00ccff, 0 0 40px #00ccff;
+  text-shadow: 0 0 10px #00aaff;
+}
+
+.description {
+  font-size: 0.95em;
+  max-width: 800px;
+  margin: 10px auto;
+  color: #ccc;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.tile {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.tile h2 {
+  color: #00aaff;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.value {
+  font-size: 2em;
+  font-weight: bold;
+  color: #fff;
+}
+
+.label {
+  color: #aaa;
+  font-size: 0.9em;
 }
 
 .circular-gauge-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 250px;
-  position: relative;
+  height: 200px;
 }
 
 .circular-gauge {
-  width: 200px;
-  height: 200px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
-  background: conic-gradient(#00aaff 0% 0%, #222 0% 100%);
+  background: conic-gradient(#00aaff 0%, #222 0%);
   position: relative;
-  box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
-}
-
-.circular-gauge::before {
-  content: "";
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  background-color: #000;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
 }
 
 .circular-gauge::after {
@@ -45,8 +87,28 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #00ccff;
-  font-size: 1.6em;
+  font-size: 1.4em;
   font-weight: bold;
-  z-index: 2;
+  color: #fff;
+}
+
+.download-link {
+  color: #00aaff;
+  text-decoration: none;
+  font-size: 1em;
+  display: block;
+  margin-top: 10px;
+}
+
+.download-link:hover {
+  text-decoration: underline;
+}
+
+#stepChart {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.small {
+  max-width: 300px;
 }
