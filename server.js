@@ -9,7 +9,8 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // for application/json
+app.use(express.urlencoded({ extended: true })); // for x-www-form-urlencoded (MIT App)
 app.use(express.static('public')); // Serve frontend files
 
 // Helpers
@@ -36,11 +37,13 @@ app.post('/data', (req, res) => {
 
 // ✅ POST: MIT App sends LED control command
 app.post('/command', (req, res) => {
-  const { command } = req.body;
+  const raw = req.body.command;
+  const command = parseInt(raw);
 
-  // Check if 'command' is valid
-  if (typeof command === 'undefined' || command < 1 || command > 12) {
-    console.log('Invalid command received:', command);
+  console.log('Received command from MIT App:', raw);
+
+  if (isNaN(command) || command < 1 || command > 12) {
+    console.log('❌ Invalid command received:', raw);
     return res.status(400).json({ error: 'Invalid command' });
   }
 
@@ -53,8 +56,8 @@ app.post('/command', (req, res) => {
 
   saveData(data);
 
-  console.log(`Command received: ${command}, LED${ledNum} set to ${ledState}`);
-  res.sendStatus(200);
+  console.log(`✅ Command ${command} -> LED${ledNum} ${ledState}`);
+  res.json({ success: true });
 });
 
 // ✅ GET: Frontend fetches dashboard data
@@ -64,4 +67,4 @@ app.get('/status', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
