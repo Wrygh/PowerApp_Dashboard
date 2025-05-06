@@ -43,17 +43,22 @@
       const data = await res.json();
 
       const stepCount = data.stepCount || 0;
-      const todaySteps = data.todaySteps || 0;
+      const todaySteps = data.todaySteps || stepCount;
       const battery = data.battery || 0;
       const voltage = data.voltage || 0;
-      const ledStatus = Array.isArray(data.ledStatus)
-        ? data.ledStatus.map((v, i) => `LED${i+1}: ${v}`).join(' | ')
-        : data.ledStatus || "Unknown";
+      const ledStatus = data.ledStatus || {};
 
       document.getElementById("stepCount").textContent = stepCount;
       document.getElementById("todaySteps").textContent = todaySteps;
       document.getElementById("voltage").textContent = voltage + " V";
-      document.getElementById("ledStatus").textContent = ledStatus;
+
+      let ledText = '';
+      for (let i = 1; i <= 6; i++) {
+        ledText += `LED${i}: ${ledStatus[`LED${i}`] || '--'}`;
+        if (i < 6) ledText += ' | ';
+      }
+      document.getElementById("ledStatus").textContent = ledText;
+
       batteryText.textContent = battery + "%";
       batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
 
