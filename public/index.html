@@ -156,12 +156,12 @@
     <div class="tile tile-led-status">
       <h3>LED Status</h3>
       <div id="ledStatus">
-        LED1: --<br />
-        LED2: --<br />
-        LED3: --<br />
-        LED4: --<br />
-        LED5: --<br />
-        LED6: --<br />
+        LED1: <span id="led1">--</span><br />
+        LED2: <span id="led2">--</span><br />
+        LED3: <span id="led3">--</span><br />
+        LED4: <span id="led4">--</span><br />
+        LED5: <span id="led5">--</span><br />
+        LED6: <span id="led6">--</span><br />
       </div>
     </div>
 
@@ -179,67 +179,97 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const stepGraphCtx = document.getElementById('stepGraph').getContext('2d');
-    const stepGraph = new Chart(stepGraphCtx, {
+    const batteryGauge = document.getElementById("batteryGauge");
+    const batteryText = document.getElementById("batteryText");
+
+    const ctx = document.getElementById('stepGraph').getContext('2d');
+    const stepGraph = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: [],
+        labels: Array.from({ length: 10 }, (_, i) => `T-${9 - i}`),
         datasets: [{
           label: 'Steps',
-          data: [],
+          data: Array(10).fill(0),
           borderColor: '#00bfff',
+          backgroundColor: 'rgba(0,191,255,0.1)',
           borderWidth: 2,
-          fill: false,
-          tension: 0.2
+          tension: 0.3
         }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: '#fff' }
+          }
+        },
         scales: {
+          x: {
+            ticks: { color: '#fff' },
+            grid: { color: '#333' }
+          },
           y: {
             beginAtZero: true,
-            ticks: { stepSize: 1 }
+            ticks: { color: '#fff' },
+            grid: { color: '#333' }
           }
         }
       }
     });
 
-    async function fetchData() {
+    async function updateData() {
       try {
         const res = await fetch('/status');
         const data = await res.json();
 
-        document.getElementById('stepCount').textContent = data.stepCount;
-        document.getElementById('todaySteps').textContent = data.todaySteps || data.stepCount;
-
+        const stepCount = data.stepCount || 0;
+        const todaySteps = data.todaySteps || stepCount;
         const battery = data.battery || 0;
-        document.getElementById('batteryText').textContent = battery + '%';
-        document.getElementById('batteryGauge').style.background =
-          `conic-gradient(#00bfff ${battery}%, #111 ${battery}%)`;
+        const voltage = data.voltage || 0;
+        const ledStatus = data.ledStatus || {};
 
-        document.getElementById('voltage').textContent = data.voltage + ' V';
+        document.getElementById("stepCount").textContent = stepCount;
+        document.getElementById("todaySteps").textContent = todaySteps;
+        document.getElementById("voltage").textContent = voltage + " V";
 
-        let statusText = '';
+        let ledText = '';
         for (let i = 1; i <= 6; i++) {
-          statusText += `LED${i}: ${data['led' + i] || '--'}<br>`;
+          const ledElement = document.getElementById(`led${i}`);
+          ledElement.textContent = ledStatus[`LED${i}`] || '--';  // Update text based on the backend response
         }
-        document.getElementById('ledStatus').innerHTML = statusText;
 
-        // Step graph
-        if (stepGraph.data.labels.length > 20) {
-          stepGraph.data.labels.shift();
-          stepGraph.data.datasets[0].data.shift();
-        }
-        stepGraph.data.labels.push(new Date().toLocaleTimeString());
-        stepGraph.data.datasets[0].data.push(data.stepCount);
+        batteryText.textContent = battery + "%";
+        batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
+
+        stepGraph.data.datasets[0].data.push(stepCount);
+        stepGraph.data.datasets[0].data.shift();
         stepGraph.update();
-      } catch (e) {
-        console.error("Fetch error:", e);
+
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
       }
     }
 
-    setInterval(fetchData, 1000);
+    async function sendCommand(command) {
+      try {
+        const res = await fetch('/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command })
+        });
+
+        if (!res.ok) {
+          throw new Error('Failed to send command');
+        }
+
+        console.log(`Command ${command} sent successfully`);
+      } catch (error) {
+        console.error('Error sending command:', error);
+      }
+    }
+
+    updateData();
+    setInterval(updateData, 1000); // Update every second
   </script>
 </body>
 
