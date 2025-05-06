@@ -36,16 +36,11 @@ app.post('/data', (req, res) => {
 
 // ✅ POST: MIT App sends LED control command
 app.post('/command', (req, res) => {
-  console.log("Received command from MIT App:", req.body); // Log the entire request body for debugging
-
   const { command } = req.body;
-  if (command === undefined) {
-    console.error("Command is undefined or missing in the request body.");
-    return res.status(400).json({ error: 'Missing command' });
-  }
 
-  if (typeof command !== 'number' || command < 1 || command > 12) {
-    console.error("Received invalid command:", command);
+  // Check if 'command' is valid
+  if (typeof command === 'undefined' || command < 1 || command > 12) {
+    console.log('Invalid command received:', command);
     return res.status(400).json({ error: 'Invalid command' });
   }
 
@@ -57,7 +52,8 @@ app.post('/command', (req, res) => {
   data.ledStatus[`LED${ledNum}`] = ledState;
 
   saveData(data);
-  console.log(`LED${ledNum} is now ${ledState}`);
+
+  console.log(`Command received: ${command}, LED${ledNum} set to ${ledState}`);
   res.sendStatus(200);
 });
 
