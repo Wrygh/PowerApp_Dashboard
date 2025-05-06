@@ -38,6 +38,9 @@ app.post('/data', (req, res) => {
 app.post('/command', (req, res) => {
   const { command } = req.body;
 
+  // 🔍 Log incoming command for debugging
+  console.log(`Received command from MIT App: ${command}`);
+
   if (typeof command !== 'number' || command < 1 || command > 12) {
     return res.status(400).json({ error: 'Invalid command' });
   }
@@ -61,5 +64,3 @@ app.get('/status', (req, res) => {
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
