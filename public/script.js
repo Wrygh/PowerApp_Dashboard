@@ -42,6 +42,8 @@
       const res = await fetch('/status');
       const data = await res.json();
 
+      console.log("Received data from backend:", data); // Log the full response to verify
+
       const stepCount = data.stepCount || 0;
       const todaySteps = data.todaySteps || stepCount;
       const battery = data.battery || 0;
@@ -52,10 +54,14 @@
       document.getElementById("todaySteps").textContent = todaySteps;
       document.getElementById("voltage").textContent = voltage + " V";
 
+      // Check the ledStatus structure and log it
+      console.log("LED Status:", ledStatus);
+
       // Update LED status with a better format (separated with <br /> for better display)
       let ledText = '';
       for (let i = 1; i <= 6; i++) {
         const status = ledStatus[`LED${i}`] || '--';
+        console.log(`LED${i} status:`, status); // Log each LED's status
         ledText += `LED${i}: ${status}<br />`;  // Add <br /> to ensure each LED appears on a new line
       }
       document.getElementById("ledStatus").innerHTML = ledText; // Use innerHTML to allow <br /> tags
@@ -97,4 +103,3 @@
   updateData();
   setInterval(updateData, 1000); // Update every second
 </script>
-
