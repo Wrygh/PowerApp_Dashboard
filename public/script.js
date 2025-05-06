@@ -52,16 +52,18 @@
       document.getElementById("todaySteps").textContent = todaySteps;
       document.getElementById("voltage").textContent = voltage + " V";
 
+      // Update LED status with a better format (separated with <br /> for better display)
       let ledText = '';
       for (let i = 1; i <= 6; i++) {
-        ledText += `LED${i}: ${ledStatus[`LED${i}`] || '--'}`;
-        if (i < 6) ledText += ' | ';
+        const status = ledStatus[`LED${i}`] || '--';
+        ledText += `LED${i}: ${status}<br />`;  // Add <br /> to ensure each LED appears on a new line
       }
-      document.getElementById("ledStatus").textContent = ledText;
+      document.getElementById("ledStatus").innerHTML = ledText; // Use innerHTML to allow <br /> tags
 
       batteryText.textContent = battery + "%";
       batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
 
+      // Update the step chart
       stepChart.data.datasets[0].data.push(stepCount);
       stepChart.data.datasets[0].data.shift();
       stepChart.update();
@@ -89,9 +91,10 @@
     }
   }
 
-  // Example: Send command to turn on LED 1
+  // Example: Send command to turn on LED 1 (you can change this as needed)
   sendCommand(1);
 
   updateData();
   setInterval(updateData, 1000); // Update every second
 </script>
+
