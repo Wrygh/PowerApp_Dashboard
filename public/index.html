@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Step Counter with Battery Gauge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PowerStep Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       margin: 0;
@@ -62,8 +62,8 @@
 
     .tile-battery .battery-container {
       position: relative;
-      width: 120px;
-      height: 120px;
+      width: 150px;
+      height: 150px;
       margin: auto;
     }
 
@@ -83,64 +83,110 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 1.2em;
+      font-size: 1.5em;
     }
 
     .tile-led-status {
       flex: 1 1 100%;
     }
 
+    .tile-half-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1 1 45%;
+      gap: 20px;
+    }
+
+    .half-tile {
+      background-color: #111;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,191,255,0.3);
+    }
+
+    a {
+      color: #00bfff;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
     @media (max-width: 768px) {
       .tile,
-      .tile-led-status {
+      .tile-led-status,
+      .tile-half-col {
         flex: 1 1 100%;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="logo">
-    <img src="logo.png" alt="Logo" />
-  </div>
-  <h1 class="glow-title">Step Counter with Battery Status</h1>
+  <img src="logo.png" alt="PowerStep Logo" class="logo" />
+
+  <h1 class="glow-title">PowerStep Realtime Dashboard</h1>
+
+  <p class="description">
+    <strong>PowerStep</strong> by <strong>ByteForce</strong>, a group of Computer Engineering students at Cavite State University-Carmona. <br />
+    This dashboard is the server link for real-time monitoring and PowerApp integration.
+  </p>
 
   <div class="tile-container">
-
-    <!-- Step Count Tile -->
+    <!-- Row 1 -->
     <div class="tile tile-step-count">
-      <h3>Step Count</h3>
-      <canvas id="stepChart"></canvas>
-      <p>Total Steps: <span id="stepCount">--</span></p>
-      <p>Today’s Steps: <span id="todaySteps">--</span></p>
-      <p>Voltage: <span id="voltage">-- V</span></p>
+      <h3>Step Count: <span id="stepCount">--</span></h3>
+      <h3>Today's Footsteps: <span id="todaySteps">--</span></h3>
+      <canvas id="stepGraph"></canvas>
     </div>
 
-    <!-- Battery Tile -->
     <div class="tile tile-battery">
-      <h3>Battery Status</h3>
+      <h3>Battery Level</h3>
       <div class="battery-container">
-        <div class="gauge-circle" id="batteryGauge"></div>
-        <div class="battery-text" id="batteryText">53%</div>
+        <div id="batteryGauge" class="gauge-circle"></div>
+        <div id="batteryText" class="battery-text">--%</div>
       </div>
     </div>
 
-    <!-- LED Status Tile -->
+    <!-- Row 2 -->
     <div class="tile tile-led-status">
       <h3>LED Status</h3>
-      <div id="ledStatus">Loading...</div>
+      <div id="ledStatus">
+        LED1: <span id="led1">--</span><br />
+        LED2: <span id="led2">--</span><br />
+        LED3: <span id="led3">--</span><br />
+        LED4: <span id="led4">--</span><br />
+        LED5: <span id="led5">--</span><br />
+        LED6: <span id="led6">--</span><br />
+      </div>
+    </div>
+
+    <div class="tile-half-col">
+      <div class="half-tile">
+        <h3>Voltage Input</h3>
+        <div id="voltage">--</div>
+      </div>
+      <div class="half-tile">
+        <h3>Download PowerApp</h3>
+        <a href="https://tinyurl.com/PowerAppInstaller" target="_blank">Install Now</a>
+      </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const batteryGauge = document.getElementById("batteryGauge");
       const batteryText = document.getElementById("batteryText");
 
-      const ctx = document.getElementById('stepChart').getContext('2d');
-      const stepChart = new Chart(ctx, {
+      const ctx = document.getElementById('stepGraph').getContext('2d');
+      const stepGraph = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: Array.from({ length: 10 }, (_, i) => `T-${9 - i}`),
+          labels: Array.from({ length: 10 }, (_, i) => "T-" + (9 - i)),
           datasets: [{
             label: 'Steps',
             data: Array(10).fill(0),
@@ -178,28 +224,25 @@
 
           const stepCount = data.stepCount || 0;
           const todaySteps = data.todaySteps || stepCount;
+          const battery = data.battery ?? 53; // Use actual battery or fallback
           const voltage = data.voltage || 0;
           const ledStatus = data.ledStatus || {};
-
-          const battery = 53; // Hardcoded for now
 
           document.getElementById("stepCount").textContent = stepCount;
           document.getElementById("todaySteps").textContent = todaySteps;
           document.getElementById("voltage").textContent = voltage + " V";
 
-          let ledText = '';
           for (let i = 1; i <= 6; i++) {
-            const status = ledStatus[`LED${i}`] || '--';
-            ledText += `LED${i}: ${status}<br />`;
+            const ledElement = document.getElementById(`led${i}`);
+            ledElement.textContent = ledStatus[`LED${i}`] || '--';
           }
-          document.getElementById("ledStatus").innerHTML = ledText;
 
           batteryText.textContent = battery + "%";
           batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
 
-          stepChart.data.datasets[0].data.push(stepCount);
-          stepChart.data.datasets[0].data.shift();
-          stepChart.update();
+          stepGraph.data.datasets[0].data.push(stepCount);
+          stepGraph.data.datasets[0].data.shift();
+          stepGraph.update();
 
         } catch (error) {
           console.error('Failed to fetch data:', error);
@@ -214,10 +257,7 @@
             body: JSON.stringify({ command })
           });
 
-          if (!res.ok) {
-            throw new Error('Failed to send command');
-          }
-
+          if (!res.ok) throw new Error('Failed to send command');
           console.log(`Command ${command} sent successfully`);
         } catch (error) {
           console.error('Error sending command:', error);
@@ -231,3 +271,4 @@
   </script>
 </body>
 </html>
+
