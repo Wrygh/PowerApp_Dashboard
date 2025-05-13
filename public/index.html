@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PowerStep Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step Counter with Battery Gauge</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       margin: 0;
@@ -63,8 +62,8 @@
 
     .tile-battery .battery-container {
       position: relative;
-      width: 120px;  /* Adjusted width */
-      height: 120px; /* Adjusted height */
+      width: 120px;
+      height: 120px;
       margin: auto;
     }
 
@@ -76,7 +75,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7); /* Blue glowing effect */
+      box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7);
     }
 
     .battery-text {
@@ -84,7 +83,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 1.2em; /* Slightly smaller font size for better fit */
+      font-size: 1.2em;
     }
 
     .tile-led-status {
@@ -123,80 +122,43 @@
         flex: 1 1 100%;
       }
     }
-
-    .charging-animation {
-      animation: chargingPulse 1s infinite;
-    }
-
-    @keyframes chargingPulse {
-      0% { box-shadow: 0 0 10px #00ff00; }
-      50% { box-shadow: 0 0 25px #00ff00; }
-      100% { box-shadow: 0 0 10px #00ff00; }
-    }
   </style>
 </head>
-
 <body>
-  <img src="logo.png" alt="PowerStep Logo" class="logo" />
-
-  <h1 class="glow-title">PowerStep Realtime Dashboard</h1>
-
-  <p class="description">
-    <strong>PowerStep</strong> by <strong>ByteForce</strong>, a group of Computer Engineering students at Cavite State University-Carmona. <br />
-    This dashboard is the server link for real-time monitoring and PowerApp integration.
-  </p>
+  <div class="logo">
+    <img src="logo.png" alt="Logo">
+  </div>
+  <h1 class="glow-title">Step Counter with Battery Status</h1>
 
   <div class="tile-container">
+    <!-- Step Count Tile -->
     <div class="tile tile-step-count">
-      <h3>Step Count: <span id="stepCount">--</span></h3>
-      <h3>Today's Footsteps: <span id="todaySteps">--</span></h3>
-      <canvas id="stepGraph"></canvas>
+      <h3>Step Count</h3>
+      <canvas id="stepChart"></canvas>
     </div>
 
+    <!-- Battery Tile -->
     <div class="tile tile-battery">
-      <h3>Battery Level</h3>
       <div class="battery-container">
-        <div id="batteryGauge" class="gauge-circle"></div>
-        <div id="batteryText" class="battery-text">--%</div>
+        <div class="gauge-circle" id="batteryGauge"></div>
+        <div class="battery-text" id="batteryText">53%</div> <!-- Hardcoded for testing -->
       </div>
     </div>
 
-    <!-- LED Status Tile is now back -->
+    <!-- LED Status Tile -->
     <div class="tile tile-led-status">
       <h3>LED Status</h3>
-      <div id="ledStatus">
-        LED1: <span id="led1">--</span><br />
-        LED2: <span id="led2">--</span><br />
-        LED3: <span id="led3">--</span><br />
-        LED4: <span id="led4">--</span><br />
-        LED5: <span id="led5">--</span><br />
-        LED6: <span id="led6">--</span><br />
-      </div>
-    </div>
-
-    <div class="tile-half-col">
-      <div class="half-tile">
-        <h3>Voltage Input</h3>
-        <div id="voltage">--</div>
-      </div>
-      <div class="half-tile">
-        <h3>Download PowerApp</h3>
-        <a href="https://tinyurl.com/PowerAppInstaller" target="_blank">Install Now</a>
-      </div>
+      <div id="ledStatus"></div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    let lastStepCount = 0;
-    let lastChangeTime = Date.now();
-    let isCharging = false;
-
     const batteryGauge = document.getElementById("batteryGauge");
     const batteryText = document.getElementById("batteryText");
 
-    const ctx = document.getElementById('stepGraph').getContext('2d');
-    const stepGraph = new Chart(ctx, {
+    const ctx = document.getElementById('stepChart').getContext('2d');
+    const stepChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: Array.from({ length: 10 }, (_, i) => `T-${9 - i}`),
@@ -235,9 +197,11 @@
         const res = await fetch('/status');
         const data = await res.json();
 
+        console.log("Received data from backend:", data); // Log the full response to verify
+
         const stepCount = data.stepCount || 0;
         const todaySteps = data.todaySteps || stepCount;
-        const battery = data.battery || 0;
+        const battery = 53; // Hardcoded battery percentage
         const voltage = data.voltage || 0;
         const ledStatus = data.ledStatus || {};
 
@@ -245,47 +209,54 @@
         document.getElementById("todaySteps").textContent = todaySteps;
         document.getElementById("voltage").textContent = voltage + " V";
 
+        // Check the ledStatus structure and log it
+        console.log("LED Status:", ledStatus);
+
         let ledText = '';
         for (let i = 1; i <= 6; i++) {
-          const ledElement = document.getElementById(`led${i}`);
-          ledElement.textContent = ledStatus[`LED${i}`] || '--';
+          const status = ledStatus[`LED${i}`] || '--';
+          console.log(`LED${i} status:`, status); // Log each LED's status
+          ledText += `LED${i}: ${status}<br />`;  // Add <br /> to ensure each LED appears on a new line
         }
+        document.getElementById("ledStatus").innerHTML = ledText; // Use innerHTML to allow <br /> tags
 
-        batteryText.textContent = battery + "%";
-        batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
-
-        // ⚡️ Handle Charging Animation
-        if (stepCount > lastStepCount) {
-          lastChangeTime = Date.now();
-          if (!isCharging) {
-            batteryGauge.classList.add("charging-animation");  // Start animation
-            isCharging = true;
-            console.log("Charging animation started");
-          }
-        } else if (Date.now() - lastChangeTime > 3000) {  // 3 seconds of no change
-          if (isCharging) {
-            batteryGauge.classList.remove("charging-animation");  // Stop animation
-            isCharging = false;
-            console.log("Charging animation stopped");
-          }
-        }
+        // **Hardcode battery value to 53% for testing**
+        console.log(`Hardcoded Battery: ${battery}%`);
+        batteryText.textContent = battery + "%"; // Update text content
+        batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`; // Update the gauge
 
         // Update the step chart
-        stepGraph.data.datasets[0].data.push(stepCount);
-        stepGraph.data.datasets[0].data.shift();
-        stepGraph.update();
-
-        lastStepCount = stepCount;
+        stepChart.data.datasets[0].data.push(stepCount);
+        stepChart.data.datasets[0].data.shift();
+        stepChart.update();
 
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
     }
 
+    async function sendCommand(command) {
+      try {
+        const res = await fetch('/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command })
+        });
+
+        if (!res.ok) {
+          throw new Error('Failed to send command');
+        }
+
+        console.log(`Command ${command} sent successfully`);
+      } catch (error) {
+        console.error('Error sending command:', error);
+      }
+    }
+
+    sendCommand(1);
     updateData();
     setInterval(updateData, 1000); // Update every second
   </script>
 </body>
-
 </html>
 
