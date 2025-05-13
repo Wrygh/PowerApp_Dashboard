@@ -65,10 +65,11 @@
       }
       document.getElementById("ledStatus").innerHTML = ledText; // Use innerHTML to allow <br /> tags
 
-      // Hardcode battery value to 53%
+      // **Hardcode battery value to 53% for testing**
       const battery = 53; // Hardcoded battery percentage
-      batteryText.textContent = battery + "%";
-      batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
+      console.log(`Hardcoded Battery: ${battery}%`); // Check if it's properly logging
+      batteryText.textContent = battery + "%"; // Update text content
+      batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`; // Update the gauge
 
       // Update the step chart
       stepChart.data.datasets[0].data.push(stepCount);
