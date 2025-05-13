@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -75,7 +76,26 @@
       position: absolute;
       top: 0;
       left: 0;
-      box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7);
+      box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7); /* Blue glowing effect */
+    }
+
+    .charging {
+      animation: chargingAnimation 1s infinite;
+    }
+
+    @keyframes chargingAnimation {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7);
+      }
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 25px 10px rgba(0, 191, 255, 1);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7);
+      }
     }
 
     .battery-text {
@@ -178,97 +198,98 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const batteryGauge = document.getElementById("batteryGauge");
-      const batteryText = document.getElementById("batteryText");
+    const batteryGauge = document.getElementById("batteryGauge");
+    const batteryText = document.getElementById("batteryText");
 
-      const ctx = document.getElementById('stepGraph').getContext('2d');
-      const stepGraph = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: Array.from({ length: 10 }, (_, i) => "T-" + (9 - i)),
-          datasets: [{
-            label: 'Steps',
-            data: Array(10).fill(0),
-            borderColor: '#00bfff',
-            backgroundColor: 'rgba(0,191,255,0.1)',
-            borderWidth: 2,
-            tension: 0.3
-          }]
+    const ctx = document.getElementById('stepGraph').getContext('2d');
+    const stepGraph = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Array.from({ length: 10 }, (_, i) => `T-${9 - i}`),
+        datasets: [{
+          label: 'Steps',
+          data: Array(10).fill(0),
+          borderColor: '#00bfff',
+          backgroundColor: 'rgba(0,191,255,0.1)',
+          borderWidth: 2,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: '#fff' }
+          }
         },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              labels: { color: '#fff' }
-            }
+        scales: {
+          x: {
+            ticks: { color: '#fff' },
+            grid: { color: '#333' }
           },
-          scales: {
-            x: {
-              ticks: { color: '#fff' },
-              grid: { color: '#333' }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: { color: '#fff' },
-              grid: { color: '#333' }
-            }
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#fff' },
+            grid: { color: '#333' }
           }
         }
-      });
-
-      async function updateData() {
-        try {
-          const res = await fetch('/status');
-          const data = await res.json();
-
-          const stepCount = data.stepCount || 0;
-          const todaySteps = data.todaySteps || stepCount;
-          const battery = data.battery ?? 53; // Use actual battery or fallback
-          const voltage = data.voltage || 0;
-          const ledStatus = data.ledStatus || {};
-
-          document.getElementById("stepCount").textContent = stepCount;
-          document.getElementById("todaySteps").textContent = todaySteps;
-          document.getElementById("voltage").textContent = voltage + " V";
-
-          for (let i = 1; i <= 6; i++) {
-            const ledElement = document.getElementById(`led${i}`);
-            ledElement.textContent = ledStatus[`LED${i}`] || '--';
-          }
-
-          batteryText.textContent = battery + "%";
-          batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
-
-          stepGraph.data.datasets[0].data.push(stepCount);
-          stepGraph.data.datasets[0].data.shift();
-          stepGraph.update();
-
-        } catch (error) {
-          console.error('Failed to fetch data:', error);
-        }
       }
-
-      async function sendCommand(command) {
-        try {
-          const res = await fetch('/command', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ command })
-          });
-
-          if (!res.ok) throw new Error('Failed to send command');
-          console.log(`Command ${command} sent successfully`);
-        } catch (error) {
-          console.error('Error sending command:', error);
-        }
-      }
-
-      sendCommand(1);
-      updateData();
-      setInterval(updateData, 1000);
     });
+
+    let previousStepCount = 0;
+    let chargingTimeout = null;
+
+    async function updateData() {
+      try {
+        const res = await fetch('/status');
+        const data = await res.json();
+
+        const stepCount = data.stepCount || 0;
+        const todaySteps = data.todaySteps || stepCount;
+        const battery = data.battery || 0;
+        const voltage = data.voltage || 0;
+        const ledStatus = data.ledStatus || {};
+
+        document.getElementById("stepCount").textContent = stepCount;
+        document.getElementById("todaySteps").textContent = todaySteps;
+        document.getElementById("voltage").textContent = voltage + " V";
+
+        // Update LED statuses
+        for (let i = 1; i <= 6; i++) {
+          const ledElement = document.getElementById(`led${i}`);
+          ledElement.textContent = ledStatus[`LED${i}`] || '--';
+        }
+
+        // Update battery gauge
+        batteryText.textContent = battery + "%";
+        batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
+
+        // Handle charging animation trigger based on step count
+        if (stepCount > previousStepCount) {
+          batteryGauge.classList.add("charging");
+
+          // Reset inactivity timer
+          clearTimeout(chargingTimeout);
+          chargingTimeout = setTimeout(() => {
+            batteryGauge.classList.remove("charging");
+          }, 3000); // Stop charging animation if no increase in 3 seconds
+        }
+
+        previousStepCount = stepCount;
+
+        // Update step graph
+        stepGraph.data.datasets[0].data.push(stepCount);
+        stepGraph.data.datasets[0].data.shift();
+        stepGraph.update();
+
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    }
+
+    updateData();
+    setInterval(updateData, 1000); // Update every second
   </script>
 </body>
-</html>
 
+</html>
