@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PowerStep Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       margin: 0;
@@ -76,7 +75,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7); /* Green glowing effect */
+      box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7);
+      transition: box-shadow 0.3s ease;
     }
 
     .charging {
@@ -85,16 +85,13 @@
 
     @keyframes chargingAnimation {
       0% {
-        transform: scale(1);
-        box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7); /* Green glowing effect */
+        box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7);
       }
       50% {
-        transform: scale(1.1);
-        box-shadow: 0 0 25px 10px rgba(0, 255, 0, 1); /* Stronger green glow */
+        box-shadow: 0 0 25px 10px rgba(0, 255, 0, 1);
       }
       100% {
-        transform: scale(1);
-        box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7); /* Green glowing effect */
+        box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7);
       }
     }
 
@@ -147,7 +144,6 @@
 
 <body>
   <img src="logo.png" alt="PowerStep Logo" class="logo" />
-
   <h1 class="glow-title">PowerStep Realtime Dashboard</h1>
 
   <p class="description">
@@ -218,20 +214,11 @@
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            labels: { color: '#fff' }
-          }
+          legend: { labels: { color: '#fff' } }
         },
         scales: {
-          x: {
-            ticks: { color: '#fff' },
-            grid: { color: '#333' }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: { color: '#fff' },
-            grid: { color: '#333' }
-          }
+          x: { ticks: { color: '#fff' }, grid: { color: '#333' } },
+          y: { beginAtZero: true, ticks: { color: '#fff' }, grid: { color: '#333' } }
         }
       }
     });
@@ -246,51 +233,45 @@
 
         const stepCount = data.stepCount || 0;
         const todaySteps = data.todaySteps || stepCount;
-        const battery = data.battery || 0;
         const voltage = data.voltage || 0;
         const ledStatus = data.ledStatus || {};
+
+        // Fixed battery percentage
+        const battery = 53;
 
         document.getElementById("stepCount").textContent = stepCount;
         document.getElementById("todaySteps").textContent = todaySteps;
         document.getElementById("voltage").textContent = voltage + " V";
 
-        // Update LED statuses
         for (let i = 1; i <= 6; i++) {
-          const ledElement = document.getElementById(`led${i}`);
-          ledElement.textContent = ledStatus[`LED${i}`] || '--';
+          document.getElementById(`led${i}`).textContent = ledStatus[`LED${i}`] || '--';
         }
 
-        // Update battery gauge
         batteryText.textContent = battery + "%";
         batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
 
-        // Handle charging animation trigger based on step count
         if (stepCount > previousStepCount) {
           batteryGauge.classList.add("charging");
 
-          // Reset inactivity timer
           clearTimeout(chargingTimeout);
           chargingTimeout = setTimeout(() => {
             batteryGauge.classList.remove("charging");
-          }, 3000); // Stop charging animation if no increase in 3 seconds
+          }, 3000);
         }
 
         previousStepCount = stepCount;
 
-        // Update step graph
         stepGraph.data.datasets[0].data.push(stepCount);
         stepGraph.data.datasets[0].data.shift();
         stepGraph.update();
-
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
+      } catch (err) {
+        console.error('Fetch error:', err);
       }
     }
 
     updateData();
-    setInterval(updateData, 1000); // Update every second
+    setInterval(updateData, 1000);
   </script>
 </body>
 
 </html>
-
