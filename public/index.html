@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Step Counter with Battery Gauge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
@@ -90,35 +90,9 @@
       flex: 1 1 100%;
     }
 
-    .tile-half-col {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      flex: 1 1 45%;
-      gap: 20px;
-    }
-
-    .half-tile {
-      background-color: #111;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,191,255,0.3);
-    }
-
-    a {
-      color: #00bfff;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    h3 {
-      margin-top: 0;
-    }
-
     @media (max-width: 768px) {
       .tile,
-      .tile-led-status,
-      .tile-half-col {
+      .tile-led-status {
         flex: 1 1 100%;
       }
     }
@@ -126,137 +100,134 @@
 </head>
 <body>
   <div class="logo">
-    <img src="logo.png" alt="Logo">
+    <img src="logo.png" alt="Logo" />
   </div>
   <h1 class="glow-title">Step Counter with Battery Status</h1>
 
   <div class="tile-container">
+
     <!-- Step Count Tile -->
     <div class="tile tile-step-count">
       <h3>Step Count</h3>
       <canvas id="stepChart"></canvas>
+      <p>Total Steps: <span id="stepCount">--</span></p>
+      <p>Today’s Steps: <span id="todaySteps">--</span></p>
+      <p>Voltage: <span id="voltage">-- V</span></p>
     </div>
 
     <!-- Battery Tile -->
     <div class="tile tile-battery">
+      <h3>Battery Status</h3>
       <div class="battery-container">
         <div class="gauge-circle" id="batteryGauge"></div>
-        <div class="battery-text" id="batteryText">53%</div> <!-- Hardcoded for testing -->
+        <div class="battery-text" id="batteryText">53%</div>
       </div>
     </div>
 
     <!-- LED Status Tile -->
     <div class="tile tile-led-status">
       <h3>LED Status</h3>
-      <div id="ledStatus"></div>
+      <div id="ledStatus">Loading...</div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const batteryGauge = document.getElementById("batteryGauge");
-    const batteryText = document.getElementById("batteryText");
+    document.addEventListener("DOMContentLoaded", () => {
+      const batteryGauge = document.getElementById("batteryGauge");
+      const batteryText = document.getElementById("batteryText");
 
-    const ctx = document.getElementById('stepChart').getContext('2d');
-    const stepChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: Array.from({ length: 10 }, (_, i) => `T-${9 - i}`),
-        datasets: [{
-          label: 'Steps',
-          data: Array(10).fill(0),
-          borderColor: '#00bfff',
-          backgroundColor: 'rgba(0,191,255,0.1)',
-          borderWidth: 2,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: { color: '#fff' }
-          }
+      const ctx = document.getElementById('stepChart').getContext('2d');
+      const stepChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({ length: 10 }, (_, i) => `T-${9 - i}`),
+          datasets: [{
+            label: 'Steps',
+            data: Array(10).fill(0),
+            borderColor: '#00bfff',
+            backgroundColor: 'rgba(0,191,255,0.1)',
+            borderWidth: 2,
+            tension: 0.3
+          }]
         },
-        scales: {
-          x: {
-            ticks: { color: '#fff' },
-            grid: { color: '#333' }
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: { color: '#fff' }
+            }
           },
-          y: {
-            beginAtZero: true,
-            ticks: { color: '#fff' },
-            grid: { color: '#333' }
+          scales: {
+            x: {
+              ticks: { color: '#fff' },
+              grid: { color: '#333' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#fff' },
+              grid: { color: '#333' }
+            }
           }
         }
+      });
+
+      async function updateData() {
+        try {
+          const res = await fetch('/status');
+          const data = await res.json();
+
+          const stepCount = data.stepCount || 0;
+          const todaySteps = data.todaySteps || stepCount;
+          const voltage = data.voltage || 0;
+          const ledStatus = data.ledStatus || {};
+
+          const battery = 53; // Hardcoded for now
+
+          document.getElementById("stepCount").textContent = stepCount;
+          document.getElementById("todaySteps").textContent = todaySteps;
+          document.getElementById("voltage").textContent = voltage + " V";
+
+          let ledText = '';
+          for (let i = 1; i <= 6; i++) {
+            const status = ledStatus[`LED${i}`] || '--';
+            ledText += `LED${i}: ${status}<br />`;
+          }
+          document.getElementById("ledStatus").innerHTML = ledText;
+
+          batteryText.textContent = battery + "%";
+          batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
+
+          stepChart.data.datasets[0].data.push(stepCount);
+          stepChart.data.datasets[0].data.shift();
+          stepChart.update();
+
+        } catch (error) {
+          console.error('Failed to fetch data:', error);
+        }
       }
+
+      async function sendCommand(command) {
+        try {
+          const res = await fetch('/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ command })
+          });
+
+          if (!res.ok) {
+            throw new Error('Failed to send command');
+          }
+
+          console.log(`Command ${command} sent successfully`);
+        } catch (error) {
+          console.error('Error sending command:', error);
+        }
+      }
+
+      sendCommand(1);
+      updateData();
+      setInterval(updateData, 1000);
     });
-
-    async function updateData() {
-      try {
-        const res = await fetch('/status');
-        const data = await res.json();
-
-        console.log("Received data from backend:", data); // Log the full response to verify
-
-        const stepCount = data.stepCount || 0;
-        const todaySteps = data.todaySteps || stepCount;
-        const battery = 53; // Hardcoded battery percentage
-        const voltage = data.voltage || 0;
-        const ledStatus = data.ledStatus || {};
-
-        document.getElementById("stepCount").textContent = stepCount;
-        document.getElementById("todaySteps").textContent = todaySteps;
-        document.getElementById("voltage").textContent = voltage + " V";
-
-        // Check the ledStatus structure and log it
-        console.log("LED Status:", ledStatus);
-
-        let ledText = '';
-        for (let i = 1; i <= 6; i++) {
-          const status = ledStatus[`LED${i}`] || '--';
-          console.log(`LED${i} status:`, status); // Log each LED's status
-          ledText += `LED${i}: ${status}<br />`;  // Add <br /> to ensure each LED appears on a new line
-        }
-        document.getElementById("ledStatus").innerHTML = ledText; // Use innerHTML to allow <br /> tags
-
-        // **Hardcode battery value to 53% for testing**
-        console.log(`Hardcoded Battery: ${battery}%`);
-        batteryText.textContent = battery + "%"; // Update text content
-        batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`; // Update the gauge
-
-        // Update the step chart
-        stepChart.data.datasets[0].data.push(stepCount);
-        stepChart.data.datasets[0].data.shift();
-        stepChart.update();
-
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      }
-    }
-
-    async function sendCommand(command) {
-      try {
-        const res = await fetch('/command', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ command })
-        });
-
-        if (!res.ok) {
-          throw new Error('Failed to send command');
-        }
-
-        console.log(`Command ${command} sent successfully`);
-      } catch (error) {
-        console.error('Error sending command:', error);
-      }
-    }
-
-    sendCommand(1);
-    updateData();
-    setInterval(updateData, 1000); // Update every second
   </script>
 </body>
 </html>
-
