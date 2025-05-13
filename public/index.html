@@ -63,8 +63,8 @@
 
     .tile-battery .battery-container {
       position: relative;
-      width: 150px;
-      height: 150px;
+      width: 120px;  /* Adjusted width */
+      height: 120px; /* Adjusted height */
       margin: auto;
     }
 
@@ -84,7 +84,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 1.5em;
+      font-size: 1.2em; /* Slightly smaller font size for better fit */
     }
 
     .tile-led-status {
@@ -123,6 +123,16 @@
         flex: 1 1 100%;
       }
     }
+
+    .charging-animation {
+      animation: chargingPulse 1s infinite;
+    }
+
+    @keyframes chargingPulse {
+      0% { box-shadow: 0 0 10px #00ff00; }
+      50% { box-shadow: 0 0 25px #00ff00; }
+      100% { box-shadow: 0 0 10px #00ff00; }
+    }
   </style>
 </head>
 
@@ -137,7 +147,6 @@
   </p>
 
   <div class="tile-container">
-    <!-- Row 1 -->
     <div class="tile tile-step-count">
       <h3>Step Count: <span id="stepCount">--</span></h3>
       <h3>Today's Footsteps: <span id="todaySteps">--</span></h3>
@@ -152,8 +161,7 @@
       </div>
     </div>
 
-    <!-- Row 2 -->
-    <div class="tile tile-led-status">
+    <div class="tile-led-status">
       <h3>LED Status</h3>
       <div id="ledStatus">
         LED1: <span id="led1">--</span><br />
@@ -179,6 +187,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
+    let lastStepCount = 0;
+    let lastChangeTime = Date.now();
+    let isCharging = false;
+
     const batteryGauge = document.getElementById("batteryGauge");
     const batteryText = document.getElementById("batteryText");
 
@@ -235,36 +247,37 @@
         let ledText = '';
         for (let i = 1; i <= 6; i++) {
           const ledElement = document.getElementById(`led${i}`);
-          ledElement.textContent = ledStatus[`LED${i}`] || '--';  // Update text based on the backend response
+          ledElement.textContent = ledStatus[`LED${i}`] || '--';
         }
 
         batteryText.textContent = battery + "%";
         batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
 
+        // ⚡️ Handle Charging Animation
+        if (stepCount > lastStepCount) {
+          lastChangeTime = Date.now();
+          if (!isCharging) {
+            batteryGauge.classList.add("charging-animation");  // Start animation
+            isCharging = true;
+            console.log("Charging animation started");
+          }
+        } else if (Date.now() - lastChangeTime > 3000) {  // 3 seconds of no change
+          if (isCharging) {
+            batteryGauge.classList.remove("charging-animation");  // Stop animation
+            isCharging = false;
+            console.log("Charging animation stopped");
+          }
+        }
+
+        // Update the step chart
         stepGraph.data.datasets[0].data.push(stepCount);
         stepGraph.data.datasets[0].data.shift();
         stepGraph.update();
 
+        lastStepCount = stepCount;
+
       } catch (error) {
         console.error('Failed to fetch data:', error);
-      }
-    }
-
-    async function sendCommand(command) {
-      try {
-        const res = await fetch('/command', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ command })
-        });
-
-        if (!res.ok) {
-          throw new Error('Failed to send command');
-        }
-
-        console.log(`Command ${command} sent successfully`);
-      } catch (error) {
-        console.error('Error sending command:', error);
       }
     }
 
