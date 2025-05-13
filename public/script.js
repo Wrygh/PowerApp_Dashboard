@@ -65,9 +65,8 @@
       }
       document.getElementById("ledStatus").innerHTML = ledText; // Use innerHTML to allow <br /> tags
 
-      // HARD CODE the battery percentage to 53% for testing
+      // Hardcode battery value to 53%
       const battery = 53; // Hardcoded battery percentage
-
       batteryText.textContent = battery + "%";
       batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
 
@@ -105,4 +104,3 @@
   updateData();
   setInterval(updateData, 1000); // Update every second
 </script>
-
