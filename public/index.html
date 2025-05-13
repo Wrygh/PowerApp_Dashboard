@@ -72,11 +72,11 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: conic-gradient(#00bfff 0%, #111 0%);
+      background: conic-gradient(#00bfff 53%, #111 0%);
       position: absolute;
       top: 0;
       left: 0;
-      box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7); /* Blue glowing effect */
+      box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7); /* Green glowing effect */
     }
 
     .charging {
@@ -86,15 +86,15 @@
     @keyframes chargingAnimation {
       0% {
         transform: scale(1);
-        box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7);
+        box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7); /* Green glowing effect */
       }
       50% {
         transform: scale(1.1);
-        box-shadow: 0 0 25px 10px rgba(0, 191, 255, 1);
+        box-shadow: 0 0 25px 10px rgba(0, 255, 0, 1); /* Stronger green glow */
       }
       100% {
         transform: scale(1);
-        box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7);
+        box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7); /* Green glowing effect */
       }
     }
 
@@ -167,7 +167,7 @@
       <h3>Battery Level</h3>
       <div class="battery-container">
         <div id="batteryGauge" class="gauge-circle"></div>
-        <div id="batteryText" class="battery-text">--%</div>
+        <div id="batteryText" class="battery-text">53%</div>
       </div>
     </div>
 
@@ -293,3 +293,4 @@
 </body>
 
 </html>
+
