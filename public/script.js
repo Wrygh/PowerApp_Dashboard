@@ -37,31 +37,15 @@
     }
   });
 
-  let lastStepCount = 0;
-  let lastStepTime = Date.now();
-  let charging = false;
-
-  function setChargingState(isCharging) {
-    if (isCharging && !charging) {
-      batteryGauge.classList.add('charging-animation');
-      batteryText.textContent = "Charging";
-      charging = true;
-    } else if (!isCharging && charging) {
-      batteryGauge.classList.remove('charging-animation');
-      charging = false;
-    }
-  }
-
   async function updateData() {
     try {
       const res = await fetch('/status');
       const data = await res.json();
 
-      console.log("Received data from backend:", data);
+      console.log("Received data from backend:", data); // Log the full response to verify
 
       const stepCount = data.stepCount || 0;
       const todaySteps = data.todaySteps || stepCount;
-      const battery = data.battery || 0;
       const voltage = data.voltage || 0;
       const ledStatus = data.ledStatus || {};
 
@@ -69,32 +53,25 @@
       document.getElementById("todaySteps").textContent = todaySteps;
       document.getElementById("voltage").textContent = voltage + " V";
 
-      // LED display
+      // Check the ledStatus structure and log it
+      console.log("LED Status:", ledStatus);
+
+      // Update LED status with a better format (separated with <br /> for better display)
       let ledText = '';
       for (let i = 1; i <= 6; i++) {
         const status = ledStatus[`LED${i}`] || '--';
-        console.log(`LED${i} status:`, status);
-        ledText += `LED${i}: ${status}<br />`;
+        console.log(`LED${i} status:`, status); // Log each LED's status
+        ledText += `LED${i}: ${status}<br />`;  // Add <br /> to ensure each LED appears on a new line
       }
-      document.getElementById("ledStatus").innerHTML = ledText;
+      document.getElementById("ledStatus").innerHTML = ledText; // Use innerHTML to allow <br /> tags
 
-      // Step-based charging logic
-      if (stepCount > lastStepCount) {
-        lastStepTime = Date.now();
-        setChargingState(true);
-      } else if (Date.now() - lastStepTime > 3000) {
-        setChargingState(false);
-      }
+      // HARD CODE the battery percentage to 53% for testing
+      const battery = 53; // Hardcoded battery percentage
 
-      lastStepCount = stepCount;
-
-      // Battery text
-      if (!charging) {
-        batteryText.textContent = battery + "%";
-      }
-
+      batteryText.textContent = battery + "%";
       batteryGauge.style.background = `conic-gradient(#00bfff ${battery}%, #111 0%)`;
 
+      // Update the step chart
       stepChart.data.datasets[0].data.push(stepCount);
       stepChart.data.datasets[0].data.shift();
       stepChart.update();
@@ -122,9 +99,10 @@
     }
   }
 
-  // Example: Send command to turn on LED 1
+  // Example: Send command to turn on LED 1 (you can change this as needed)
   sendCommand(1);
 
   updateData();
   setInterval(updateData, 1000); // Update every second
 </script>
+
