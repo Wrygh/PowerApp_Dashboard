@@ -51,7 +51,7 @@
         const ledStatus = data.ledStatus || {};
 
         // Hardcoded battery value
-        const battery = 53;
+        const battery = 97;
 
         // Update DOM elements
         document.getElementById("stepCount").textContent = stepCount;
