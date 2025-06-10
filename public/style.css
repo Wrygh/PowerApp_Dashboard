@@ -9,21 +9,22 @@ body {
   display: block;
   margin: 20px auto 10px;
   width: 120px;
-  filter: drop-shadow(0 0 10px #00bfff);
+  filter: drop-shadow(0 0 20px #00bfff);
 }
 
 h1.glow-title {
   text-align: center;
   font-size: 2em;
   color: #00bfff;
-  text-shadow: 0 0 10px #00bfff;
+  text-shadow: 0 0 20px #00bfff, 0 0 30px #00bfff;
 }
 
 .description {
   text-align: center;
-  color: #aaa;
+  color: #ccc;
   margin: 0 20px 20px;
   line-height: 1.4em;
+  text-shadow: 0 0 5px #00bfff;
 }
 
 .tile-container {
@@ -40,7 +41,7 @@ h1.glow-title {
   background-color: #111;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0,191,255,0.3);
+  box-shadow: 0 0 20px rgba(0,191,255,0.6);
   flex: 1 1 45%;
   min-width: 280px;
   max-width: 500px;
@@ -66,7 +67,7 @@ h1.glow-title {
   position: absolute;
   top: 0;
   left: 0;
-  box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.7);
+  box-shadow: 0 0 30px 10px rgba(0, 191, 255, 0.9);
 }
 
 .battery-text {
@@ -75,6 +76,7 @@ h1.glow-title {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.2em;
+  text-shadow: 0 0 8px #00bfff;
 }
 
 .tile-led-status {
@@ -93,17 +95,19 @@ h1.glow-title {
   background-color: #111;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,191,255,0.3);
+  box-shadow: 0 0 20px rgba(0,191,255,0.6);
 }
 
 a {
   color: #00bfff;
   font-weight: bold;
   text-decoration: none;
+  text-shadow: 0 0 10px #00bfff;
 }
 
 h3 {
   margin-top: 0;
+  text-shadow: 0 0 8px #00bfff;
 }
 
 @media (max-width: 768px) {
@@ -114,17 +118,16 @@ h3 {
   }
 }
 
-/* 🔋 Charging Animation: Matches theme color #00bfff */
+/* 🔋 Charging Animation: Enhanced Glow */
 .charging-animation {
   animation: pulseGlow 1s infinite alternate;
 }
 
 @keyframes pulseGlow {
   from {
-    box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.6);
+    box-shadow: 0 0 20px 10px rgba(0, 191, 255, 0.8);
   }
   to {
-    box-shadow: 0 0 25px 10px rgba(0, 191, 255, 1);
+    box-shadow: 0 0 40px 20px rgba(0, 191, 255, 1);
   }
 }
-
